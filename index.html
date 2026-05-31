@@ -5,200 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>УчебаВместе - Главная</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Font Awesome для иконок -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* Дополнительные стили для VK-модалки (если в styles.css чего-то нет) */
-        .vk-publish-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: #2787f5;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            z-index: 1000;
-            display: none;
-            align-items: center;
-            gap: 8px;
-            transition: 0.2s;
-        }
-        .vk-publish-btn:hover {
-            background: #1a6ed8;
-            transform: scale(1.02);
-        }
-        .vk-modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.6);
-            justify-content: center;
-            align-items: center;
-        }
-        .vk-modal-content {
-            background: white;
-            width: 90%;
-            max-width: 650px;
-            border-radius: 24px;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
-            animation: fadeInUp 0.2s ease;
-        }
-        .vk-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.2rem 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .vk-modal-header h3 {
-            margin: 0;
-            font-size: 1.4rem;
-        }
-        .vk-modal-close {
-            font-size: 28px;
-            cursor: pointer;
-            color: #94a3b8;
-        }
-        .vk-modal-body {
-            padding: 1.5rem;
-        }
-        #vkPostText {
-            width: 100%;
-            border: 1px solid #cbd5e1;
-            border-radius: 16px;
-            padding: 12px;
-            font-size: 15px;
-            resize: vertical;
-            font-family: inherit;
-        }
-        .vk-char-counter {
-            text-align: right;
-            font-size: 12px;
-            color: #64748b;
-            margin: 5px 0 15px;
-        }
-        .vk-image-zone {
-            border: 2px dashed #cbd5e1;
-            border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-            background: #f8fafc;
-            cursor: pointer;
-            transition: 0.2s;
-            margin-bottom: 15px;
-        }
-        .vk-image-zone.drag-over {
-            border-color: #2787f5;
-            background: #eef2ff;
-        }
-        .vk-upload-placeholder i {
-            font-size: 36px;
-            color: #2787f5;
-        }
-        .vk-upload-placeholder p {
-            margin: 5px 0 0;
-            color: #475569;
-        }
-        .vk-image-preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .preview-img-wrapper {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            border-radius: 12px;
-            overflow: hidden;
-            background: #f1f5f9;
-        }
-        .preview-img-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .preview-img-wrapper button {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            background: rgba(0,0,0,0.6);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .vk-info-message {
-            background: #eef2ff;
-            padding: 10px;
-            border-radius: 12px;
-            font-size: 13px;
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            margin: 15px 0;
-        }
-        .vk-modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            padding: 1rem 1.5rem 1.5rem;
-        }
-        .vk-btn {
-            padding: 10px 20px;
-            border-radius: 40px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: 0.2s;
-        }
-        .vk-btn-outline {
-            background: white;
-            border: 1px solid #cbd5e1;
-            color: #1e293b;
-        }
-        .vk-btn-primary {
-            background: #2787f5;
-            color: white;
-        }
-        .vk-btn-primary:hover {
-            background: #1a6ed8;
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        /* стили для user-balance-header и прочего, если не было */
-        .user-balance-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-right: 1rem;
-        }
-        .balance-amount {
-            font-weight: 600;
-            color: var(--primary, #2787f5);
-        }
-        .btn-balance {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-        }
-    </style>
 </head>
 <body>
     <!-- Header -->
@@ -221,6 +29,54 @@
         </div>
     </header>
 
+    <!-- Модальное окно для публикации в VK -->
+    <div id="vkPublishModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Публикация новости в VK</h2>
+                <button class="modal-close" onclick="closeVKPublishModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="vk-publisher-container">
+                    <div class="vk-form-group">
+                        <label for="vkPostText">Текст новости:</label>
+                        <textarea id="vkPostText" class="vk-textarea" 
+                                  placeholder="Напишите новость для публикации в группе VK..." 
+                                  maxlength="4096"></textarea>
+                        <div class="char-counter" id="charCounter">0/4096</div>
+                    </div>
+                    
+                    <div class="vk-form-group">
+                        <label>Изображения (до 10 штук):</label>
+                        <div class="image-upload-section" id="vkDropZone" onclick="document.getElementById('vkImageUpload').click()">
+                            <input type="file" id="vkImageUpload" accept="image/*" multiple style="display: none;">
+                            <div id="vkImagePreview">
+                                <div class="empty-preview">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Нажмите для загрузки изображений или перетащите их сюда</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="vk-publish-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Новость будет опубликована в группе VK и автоматически отобразится на сайте</span>
+                    </div>
+                    
+                    <div class="vk-actions">
+                        <button class="btn btn-outline" onclick="clearVKForm()">
+                            <i class="fas fa-trash"></i> Очистить
+                        </button>
+                        <button class="btn btn-primary" onclick="publishToVK()">
+                            <i class="fas fa-paper-plane"></i> Опубликовать в VK
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
@@ -232,12 +88,19 @@
                         </svg>
                         <span>Рейтинг 4.9 из 5 звёзд</span>
                     </div>
+                    
                     <h1>Найдите идеального <span class="text-primary">репетитора</span> онлайн</h1>
-                    <p class="hero-description">Персональные занятия с лучшими преподавателями. Удобное расписание, проверенные методики, гарантированный результат.</p>
+                    
+                    <p class="hero-description">
+                        Персональные занятия с лучшими преподавателями. 
+                        Удобное расписание, проверенные методики, гарантированный результат.
+                    </p>
+
                     <div class="hero-buttons">
                         <a href="login_simple.html" class="btn btn-large btn-primary">Начать обучение</a>
                         <a href="teacher.html" class="btn btn-large btn-outline">Смотреть репетиторов</a>
                     </div>
+
                     <div class="hero-stats">
                         <div class="stat-item">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -246,43 +109,77 @@
                                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                                 <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                             </svg>
-                            <div><div class="stat-number">5000+</div><div class="stat-label">Учеников</div></div>
+                            <div>
+                                <div class="stat-number">5000+</div>
+                                <div class="stat-label">Учеников</div>
+                            </div>
                         </div>
                         <div class="stat-item">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
                                 <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                             </svg>
-                            <div><div class="stat-number">500+</div><div class="stat-label">Репетиторов</div></div>
+                            <div>
+                                <div class="stat-number">500+</div>
+                                <div class="stat-label">Репетиторов</div>
+                            </div>
                         </div>
                         <div class="stat-item">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
                                 <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                             </svg>
-                            <div><div class="stat-number">50+</div><div class="stat-label">Предметов</div></div>
+                            <div>
+                                <div class="stat-number">50+</div>
+                                <div class="stat-label">Предметов</div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="hero-image">
                     <img src="img/stream.jpg" alt="Онлайн обучение" onerror="this.src='https://images.unsplash.com/photo-1584792264192-dd873d389386?w=600&q=80'">
+                    <div class="hero-overlay hero-overlay-top">
+                        <div class="status-indicator"></div>
+                        <span>Урок в прямом эфире</span>
+                    </div>
+                    <div class="hero-overlay hero-overlay-bottom">
+                        <div class="overlay-label">Следующий урок</div>
+                        <div>Математика 14:30</div>
+                    </div>
+                    <div class="hero-card">
+                        <div class="card-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="card-title">Отличная оценка!</div>
+                            <div class="card-subtitle">Урок завершён</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Секция новостей из VK -->
-    <section class="news-section" id="news">
-        <div class="container">
-            <div class="section-header">
-                <h2>Последние новости из VK</h2>
-                <p>Следите за обновлениями из нашей группы ВКонтакте</p>
-            </div>
-            <div class="news-container" id="newsContainer">
-                <div class="loading-news"><i class="fas fa-sync fa-spin"></i><p>Загружаем новости из VK...</p></div>
-            </div>
-        </div>
-    </section>
+<!-- Секция новостей из VK -->
+<section class="news-section" id="news">
+  <div class="container">
+    <div class="section-header">
+      <h2>Последние новости из VK</h2>
+      <p>Следите за обновлениями из нашей группы ВКонтакте</p>
+    </div>
+    
+    <div class="news-container" id="newsContainer">
+      <!-- Новости загружаются через JavaScript -->
+      <div class="loading-news">
+        <i class="fas fa-sync fa-spin"></i>
+        <p>Загружаем новости из VK...</p>
+      </div>
+    </div>
+  </div>
+</section>
 
     <!-- Subjects Section -->
     <section class="subjects" id="subjects">
@@ -291,15 +188,83 @@
                 <h2>Выберите свой предмет</h2>
                 <p>Более 50 предметов и направлений. Опытные преподаватели и современные методики обучения.</p>
             </div>
+
             <div class="subjects-grid">
-                <div class="subject-card"><div class="subject-icon bg-blue"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><line x1="9" y1="9" x2="15" y2="15"></line><line x1="15" y1="9" x2="9" y2="15"></line></svg></div><h3>Математика</h3><p>1200+ учеников</p></div>
-                <div class="subject-card"><div class="subject-icon bg-red"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></div><h3>Русский язык</h3><p>800+ учеников</p></div>
-                <div class="subject-card"><div class="subject-icon bg-green"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg></div><h3>Английский</h3><p>1500+ учеников</p></div>
-                <div class="subject-card"><div class="subject-icon bg-purple"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle><circle cx="5" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle></svg></div><h3>Физика</h3><p>600+ учеников</p></div>
-                <div class="subject-card"><div class="subject-icon bg-orange"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></div><h3>Химия</h3><p>350+ учеников</p></div>
-                <div class="subject-card"><div class="subject-icon bg-indigo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div><h3>Программирование</h3><p>900+ учеников</p></div>
+                <div class="subject-card">
+                    <div class="subject-icon bg-blue">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                        </svg>
+                    </div>
+                    <h3>Математика</h3>
+                    <p>1200+ учеников</p>
+                </div>
+
+                <div class="subject-card">
+                    <div class="subject-icon bg-red">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                    </div>
+                    <h3>Русский язык</h3>
+                    <p>800+ учеников</p>
+                </div>
+
+                <div class="subject-card">
+                    <div class="subject-icon bg-green">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                        </svg>
+                    </div>
+                    <h3>Английский</h3>
+                    <p>1500+ учеников</p>
+                </div>
+
+                <div class="subject-card">
+                    <div class="subject-icon bg-purple">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="1"></circle>
+                            <circle cx="12" cy="5" r="1"></circle>
+                            <circle cx="12" cy="19" r="1"></circle>
+                            <circle cx="5" cy="12" r="1"></circle>
+                            <circle cx="19" cy="12" r="1"></circle>
+                        </svg>
+                    </div>
+                    <h3>Физика</h3>
+                    <p>600+ учеников</p>
+                </div>
+
+                <div class="subject-card">
+                    <div class="subject-icon bg-orange">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                    </div>
+                    <h3>Химия</h3>
+                    <p>350+ учеников</p>
+                </div>
+
+                <div class="subject-card">
+                    <div class="subject-icon bg-indigo">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                    </div>
+                    <h3>Программирование</h3>
+                    <p>900+ учеников</p>
+                </div>
             </div>
-            <div class="section-footer"><p>Не нашли нужный предмет?</p><a href="teacher.html" class="btn btn-gradient">Смотреть всех репетиторов</a></div>
+
+            <div class="section-footer">
+                <p>Не нашли нужный предмет?</p>
+                <a href="teacher.html" class="btn btn-gradient">Смотреть всех репетиторов</a>
+            </div>
         </div>
     </section>
 
@@ -307,233 +272,315 @@
     <footer>
         <div class="container">
             <div class="footer-grid">
-                <div class="footer-section"><h4>УчебаВместе</h4><p>Онлайн репетиторский сервис с лучшими преподавателями. Помогаем достигать учебных целей с 2025 года.</p></div>
-                <div class="footer-section"><h4>Навигация</h4><ul><li><a href="index.html">Главная</a></li><li><a href="#subjects">Предметы</a></li><li><a href="teacher.html">Репетиторы</a></li><li><a href="login_simple.html">Личный кабинет</a></li></ul></div>
-                <div class="footer-section"><h4>Контакты</h4><ul><li>📞 +7 (999) 123-45-67</li><li>✉️ info@ucheba-vmeste.ru</li><li>🕒 Ежедневно 9:00-21:00</li></ul></div>
-                <div class="footer-section"><h4>Мы в социальных сетях</h4><ul><li><a href="https://vk.com/public233570764" target="_blank" class="social-link"><i class="fab fa-vk"></i> Группа ВКонтакте</a></li></ul></div>
+                <div class="footer-section">
+                    <h4>УчебаВместе</h4>
+                    <p>Онлайн репетиторский сервис с лучшими преподавателями. Помогаем достигать учебных целей с 2025 года.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Навигация</h4>
+                    <ul>
+                        <li><a href="index.html">Главная</a></li>
+                        <li><a href="#subjects">Предметы</a></li>
+                        <li><a href="teacher.html">Репетиторы</a></li>
+                        <li><a href="login_simple.html">Личный кабинет</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Контакты</h4>
+                    <ul>
+                        <li>📞 +7 (999) 123-45-67</li>
+                        <li>✉️ info@ucheba-vmeste.ru</li>
+                        <li>🕒 Ежедневно 9:00-21:00</li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Мы в социальных сетях</h4>
+                    <ul>
+                        <li><a href="https://vk.com/public233570764" target="_blank" class="social-link">
+                            <i class="fab fa-vk"></i> Группа ВКонтакте
+                        </a></li>
+                        <li><a href="#" class="social-link">
+                            <i class="fab fa-telegram"></i> Telegram канал
+                        </a></li>
+                    </ul>
+                </div>
             </div>
-            <div class="footer-bottom"><p>&copy; 2025 УчебаВместе. Все права защищены.</p></div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 УчебаВместе. Все права защищены.</p>
+            </div>
         </div>
     </footer>
 
-    <!-- Кнопка публикации в VK -->
-    <button id="vkPublishBtn" class="vk-publish-btn"><i class="fab fa-vk"></i> Написать в VK</button>
+    <!-- Кнопка публикации для администратора -->
+    <button class="admin-publish-btn" id="adminPublishBtn" onclick="openVKPublishModal()">
+        <i class="fas fa-plus"></i>
+        <span>Опубликовать новость в VK</span>
+    </button>
 
-    <!-- Модальное окно для публикации в VK -->
-    <div id="vkPostModal" class="vk-modal">
-        <div class="vk-modal-content">
-            <div class="vk-modal-header">
-                <h3><i class="fab fa-vk"></i> Создать пост в сообщество</h3>
-                <span class="vk-modal-close">&times;</span>
-            </div>
-            <div class="vk-modal-body">
-                <textarea id="vkPostText" placeholder="Введите текст новости..." maxlength="4096"></textarea>
-                <div class="vk-char-counter"><span id="vkCharCount">0</span>/4096</div>
-                <div class="vk-image-zone" id="vkImageZone">
-                    <input type="file" id="vkImageInput" accept="image/*" multiple style="display: none;">
-                    <div class="vk-upload-placeholder">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <p>Нажмите или перетащите изображения (до 10 шт.)</p>
-                    </div>
-                    <div id="vkImagePreview" class="vk-image-preview"></div>
-                </div>
-                <div class="vk-info-message"><i class="fas fa-info-circle"></i> Пост появится в группе и на сайте.</div>
-            </div>
-            <div class="vk-modal-footer">
-                <button class="vk-btn vk-btn-outline" id="vkClearBtn">Очистить</button>
-                <button class="vk-btn vk-btn-primary" id="vkPublishBtnAction">Опубликовать</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- Простой скрипт для авторизации и управления -->
     <script>
-        // ======================== ОСНОВНЫЕ СКРИПТЫ САЙТА ========================
-        // Создание демо-пользователей
+        // Проверяем, есть ли демо-пользователи
         if (!localStorage.getItem('ucheba_users')) {
             const demoUsers = [
-                { id: 1, firstName: 'Админ', lastName: 'Админов', email: 'admin@ucheba-vmeste.ru', login: 'admin', password: 'admin123', role: 'admin', phone: '+7 (999) 000-00-01' },
-                { id: 2, firstName: 'Анна', lastName: 'Петрова', email: 'anna@ucheba-vmeste.ru', login: 'anna', password: 'anna123', role: 'tutor', phone: '+7 (999) 123-45-67', subjects: ['Математика', 'Физика'] },
-                { id: 3, firstName: 'Иван', lastName: 'Иванов', email: 'student@example.com', login: 'student', password: 'student123', role: 'student', phone: '+7 (999) 123-45-73' }
+                {
+                    id: 1,
+                    firstName: 'Админ',
+                    lastName: 'Админов',
+                    email: 'admin@ucheba-vmeste.ru',
+                    login: 'admin',
+                    password: 'admin123',
+                    role: 'admin',
+                    phone: '+7 (999) 000-00-01'
+                },
+                {
+                    id: 2,
+                    firstName: 'Анна',
+                    lastName: 'Петрова',
+                    email: 'anna@ucheba-vmeste.ru',
+                    login: 'anna',
+                    password: 'anna123',
+                    role: 'tutor',
+                    phone: '+7 (999) 123-45-67',
+                    subjects: ['Математика', 'Физика']
+                },
+                {
+                    id: 3,
+                    firstName: 'Иван',
+                    lastName: 'Иванов',
+                    email: 'student@example.com',
+                    login: 'student',
+                    password: 'student123',
+                    role: 'student',
+                    phone: '+7 (999) 123-45-73'
+                }
             ];
+            
             localStorage.setItem('ucheba_users', JSON.stringify(demoUsers));
+            console.log('Демо-пользователи созданы');
         }
-
-        // Демо-новости
+        
+        // Создаем демо-новости при первом посещении
         if (!localStorage.getItem('ucheba_vk_news_demo')) {
             const demoNews = [
-                { id: 1, text: '🎉 Ура! Мы запустили новый раздел "Программирование" с курсами по Python, JavaScript и веб-разработке. Первые 100 учеников получают скидку 30%!', date: '2 дня назад', fromVK: true, vkLink: 'https://vk.com/public233570764?w=wall-233570764_21' },
-                { id: 2, text: '📚 Приветствуем нового репетитора по математике - Анну Петрову! Анна - кандидат физико-математических наук с 10-летним опытом преподавания.', date: 'вчера', fromVK: true, vkLink: 'https://vk.com/public233570764?w=wall-233570764_22' },
-                { id: 3, text: '🏆 Поздравляем нашего ученика Ивана Сидорова с победой на Всероссийской олимпиаде по физике! 👏', date: 'сегодня', fromVK: true, vkLink: 'https://vk.com/public233570764?w=wall-233570764_23' }
+                {
+                    id: 1,
+                    text: '🎉 Ура! Мы запустили новый раздел "Программирование" с курсами по Python, JavaScript и веб-разработке. Первые 100 учеников получают скидку 30%!',
+                    date: '2 дня назад',
+                    fromVK: true,
+                    vkLink: 'https://vk.com/wall-233570764_1'
+                },
+                {
+                    id: 2,
+                    text: '📚 Приветствуем нового репетитора по математике - Анну Петрову! Анна - кандидат физико-математических наук с 10-летним опытом преподавания. Её ученики регулярно побеждают на олимпиадах.',
+                    date: 'вчера',
+                    fromVK: true,
+                    vkLink: 'https://vk.com/wall-233570764_2'
+                },
+                {
+                    id: 3,
+                    text: '🏆 Поздравляем нашего ученика Ивана Сидорова с победой на Всероссийской олимпиаде по физике! Иван занимался с нашим репетитором всего 6 месяцев и показал блестящий результат. Гордимся! 👏',
+                    date: 'сегодня',
+                    fromVK: true,
+                    vkLink: 'https://vk.com/wall-233570764_3'
+                }
             ];
+            
             localStorage.setItem('ucheba_vk_news', JSON.stringify(demoNews));
             localStorage.setItem('ucheba_vk_news_demo', 'true');
+            console.log('Демо-новости из VK созданы');
         }
-
-        function loadVKNews() {
-            const news = JSON.parse(localStorage.getItem('ucheba_vk_news')) || [];
-            const container = document.getElementById('newsContainer');
-            if (!container) return;
-            if (news.length === 0) {
-                container.innerHTML = '<div class="no-news"><i class="fas fa-newspaper"></i><h3>Новостей пока нет</h3><p>Подписывайтесь на нашу группу в VK!</p><a href="https://vk.com/public233570764" target="_blank" class="btn btn-primary"><i class="fab fa-vk"></i> Перейти в группу VK</a></div>';
-                return;
-            }
-            let html = '<div class="news-grid">';
-            news.forEach((item, idx) => {
-                html += `<div class="news-card"><div class="news-header"><div class="news-date"><i class="fas fa-calendar-alt"></i> ${item.date}</div><span class="news-vk-badge"><i class="fab fa-vk"></i> VK</span></div><div class="news-content"><p class="news-text">${item.text}</p></div><div class="news-footer"><span class="news-number">Новость #${news.length - idx}</span>${item.vkLink ? `<a href="${item.vkLink}" target="_blank" class="btn btn-sm btn-outline"><i class="fab fa-vk"></i> Открыть в VK</a>` : ''}</div></div>`;
-            });
-            html += '</div>';
-            container.innerHTML = html;
-        }
-
+        
+        // Обновляем интерфейс
         function updateUserInterface() {
             const userAuthSection = document.getElementById('userAuthSection');
-            const currentUser = JSON.parse(localStorage.getItem('ucheba_current_user'));
+            const adminPublishBtn = document.getElementById('adminPublishBtn');
+            
             if (!userAuthSection) return;
+            
+            const currentUser = JSON.parse(localStorage.getItem('ucheba_current_user'));
+            
+            // Показываем/скрываем кнопку публикации для администратора
+            if (adminPublishBtn) {
+                if (currentUser && currentUser.role === 'admin') {
+                    adminPublishBtn.style.display = 'flex';
+                } else {
+                    adminPublishBtn.style.display = 'none';
+                }
+            }
+            
             if (currentUser) {
                 const initials = (currentUser.firstName?.[0] || '') + (currentUser.lastName?.[0] || '');
-                const profileLink = currentUser.role === 'admin' ? 'admin_panel.html' : (currentUser.role === 'tutor' ? 'teacher_dashboard.html' : 'profile.html');
-                userAuthSection.innerHTML = `<div class="user-profile"><div class="user-avatar">${initials}</div><div class="user-info"><span class="user-greeting">Здравствуйте,</span><a href="${profileLink}" class="user-name">${currentUser.firstName}</a></div><button onclick="logout()" class="btn btn-outline btn-sm">Выйти</button></div>`;
+                const profileLink = currentUser.role === 'admin' ? 'admin_panel.html' : 
+                                   currentUser.role === 'tutor' ? 'teacher_dashboard.html' : 'profile.html';
+                
+                userAuthSection.innerHTML = `
+                    <div class="user-profile">
+                        <div class="user-avatar">${initials}</div>
+                        <div class="user-info">
+                            <span class="user-greeting">Здравствуйте,</span>
+                            <a href="${profileLink}" class="user-name">${currentUser.firstName}</a>
+                        </div>
+                        <button onclick="logout()" class="btn btn-outline btn-sm">Выйти</button>
+                    </div>
+                `;
             } else {
-                userAuthSection.innerHTML = `<a href="login_simple.html" class="btn btn-primary">Войти</a>`;
-            }
-            // Показать/скрыть кнопку VK
-            const vkBtn = document.getElementById('vkPublishBtn');
-            if (vkBtn) {
-                vkBtn.style.display = (currentUser && currentUser.role === 'admin') ? 'flex' : 'none';
+                userAuthSection.innerHTML = `
+                    <a href="login_simple.html" class="btn btn-primary">Войти</a>
+                `;
             }
         }
-
-        window.logout = function() {
+        
+        // Функция выхода
+        function logout() {
             localStorage.removeItem('ucheba_current_user');
             updateUserInterface();
             window.location.href = 'index.html';
+        }
+        
+        // Функции для модального окна VK
+        function openVKPublishModal() {
+            document.getElementById('vkPublishModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeVKPublishModal() {
+            document.getElementById('vkPublishModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Закрытие модального окна при клике вне его
+        window.onclick = function(event) {
+            const modal = document.getElementById('vkPublishModal');
+            if (event.target === modal) {
+                closeVKPublishModal();
+            }
         };
-
-        // ======================== VK ПУБЛИКАЦИЯ (прям из браузера) ========================
-        const VK_GROUP_ID = 233570764;
-        const VK_ACCESS_TOKEN = 'vk1.a.IK8gSaWVCL-PEv_PLybMVyV5ujgQSoVZUlJPsWnc_dJ758RdB1i9BbAWw0PQy8Rrvax_JATUVm7cQrXHPRRxFSSzf_TIJWQxp2fh1PuqwfSARSw6G9AlOy28Xd_GQ3c9k6TiJwwbhqv3qJ7fdxfjLmE_ycRQvummkUAgsITLuVut0gxXDbjSz_zfomb5sBFUkeKmdg2uX4SbGD5I4I8zbQ';
-
-        let selectedFiles = [];
-        const modal = document.getElementById('vkPostModal');
-        const openBtn = document.getElementById('vkPublishBtn');
-        const closeBtn = document.querySelector('.vk-modal-close');
-        const textarea = document.getElementById('vkPostText');
-        const charSpan = document.getElementById('vkCharCount');
-        const imageZone = document.getElementById('vkImageZone');
-        const imageInput = document.getElementById('vkImageInput');
-        const previewDiv = document.getElementById('vkImagePreview');
-        const clearBtn = document.getElementById('vkClearBtn');
-        const publishBtn = document.getElementById('vkPublishBtnAction');
-
-        if (textarea) {
-            textarea.addEventListener('input', () => { if(charSpan) charSpan.textContent = textarea.value.length; });
-        }
-        function openModal() { if(modal) modal.style.display = 'flex'; }
-        function closeModal() { if(modal) modal.style.display = 'none'; }
-        if (openBtn) openBtn.addEventListener('click', openModal);
-        if (closeBtn) closeBtn.addEventListener('click', closeModal);
-        window.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-
-        if (imageZone) {
-            imageZone.addEventListener('click', () => imageInput.click());
-            imageZone.addEventListener('dragover', (e) => { e.preventDefault(); imageZone.classList.add('drag-over'); });
-            imageZone.addEventListener('dragleave', () => imageZone.classList.remove('drag-over'));
-            imageZone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                imageZone.classList.remove('drag-over');
-                const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-                addImages(files);
+        
+        // Загрузка новостей из VK
+        function loadVKNews() {
+            const newsContainer = document.getElementById('newsContainer');
+            const news = JSON.parse(localStorage.getItem('ucheba_vk_news')) || [];
+            
+            if (news.length === 0) {
+                newsContainer.innerHTML = `
+                    <div class="no-news">
+                        <i class="fas fa-newspaper"></i>
+                        <h3>Новостей пока нет</h3>
+                        <p>Подписывайтесь на нашу группу в VK, чтобы быть в курсе новостей!</p>
+                        <a href="https://vk.com/public233570764" target="_blank" class="btn btn-primary">
+                            <i class="fab fa-vk"></i> Перейти в группу VK
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+            
+            let newsHTML = '<div class="news-grid">';
+            
+            news.forEach((item, index) => {
+                newsHTML += `
+                    <div class="news-card">
+                        <div class="news-header">
+                            <div class="news-date">
+                                <i class="fas fa-calendar-alt"></i>
+                                ${item.date}
+                            </div>
+                            <span class="news-vk-badge">
+                                <i class="fab fa-vk"></i> VK
+                            </span>
+                        </div>
+                        
+                        <div class="news-content">
+                            <p class="news-text">${item.text}</p>
+                        </div>
+                        
+                        <div class="news-footer">
+                            <span class="news-number">Новость #${news.length - index}</span>
+                            ${item.vkLink ? `
+                                <a href="${item.vkLink}" target="_blank" class="btn btn-sm btn-outline">
+                                    <i class="fab fa-vk"></i> Открыть в VK
+                                </a>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
             });
+            
+            newsHTML += '</div>';
+            newsContainer.innerHTML = newsHTML;
         }
-        if (imageInput) {
-            imageInput.addEventListener('change', (e) => addImages(Array.from(e.target.files)));
-        }
-
-        function addImages(files) {
-            if (selectedFiles.length + files.length > 10) { alert('Максимум 10 изображений'); return; }
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    selectedFiles.push({ file, preview: ev.target.result });
-                    renderPreview();
-                };
-                reader.readAsDataURL(file);
-            });
-            if (imageInput) imageInput.value = '';
-        }
-        function renderPreview() {
-            if (!previewDiv) return;
-            if (selectedFiles.length === 0) { previewDiv.innerHTML = ''; return; }
-            let html = '';
-            selectedFiles.forEach((img, idx) => {
-                html += `<div class="preview-img-wrapper"><img src="${img.preview}" alt="preview"><button onclick="window.removeImage(${idx})">&times;</button></div>`;
-            });
-            previewDiv.innerHTML = html;
-        }
-        window.removeImage = (index) => { selectedFiles.splice(index, 1); renderPreview(); };
-
-        if (clearBtn) {
-            clearBtn.addEventListener('click', () => {
-                if(textarea) textarea.value = '';
-                selectedFiles = [];
-                renderPreview();
-                if(charSpan) charSpan.textContent = '0';
-            });
-        }
-
-        async function uploadPhotoToVK(file) {
-            const uploadUrlRes = await fetch(`https://api.vk.com/method/photos.getWallUploadServer?group_id=${VK_GROUP_ID}&access_token=${VK_ACCESS_TOKEN}&v=5.131`);
-            const uploadData = await uploadUrlRes.json();
-            if (uploadData.error) throw new Error(uploadData.error.error_msg);
-            const uploadURL = uploadData.response.upload_url;
-            const formData = new FormData();
-            formData.append('photo', file);
-            const uploadRes = await fetch(uploadURL, { method: 'POST', body: formData });
-            const uploadResult = await uploadRes.json();
-            const saveRes = await fetch(`https://api.vk.com/method/photos.saveWallPhoto?group_id=${VK_GROUP_ID}&photo=${encodeURIComponent(uploadResult.photo)}&server=${uploadResult.server}&hash=${uploadResult.hash}&access_token=${VK_ACCESS_TOKEN}&v=5.131`);
-            const saveData = await saveRes.json();
-            if (saveData.error) throw new Error(saveData.error.error_msg);
-            const photo = saveData.response[0];
-            return `photo${photo.owner_id}_${photo.id}`;
-        }
-
-        if (publishBtn) {
-            publishBtn.addEventListener('click', async () => {
-                const text = textarea ? textarea.value.trim() : '';
-                if (!text) { alert('Введите текст поста'); return; }
-                publishBtn.disabled = true;
-                publishBtn.textContent = 'Публикация...';
-                try {
-                    let attachments = [];
-                    for (const img of selectedFiles) {
-                        const attach = await uploadPhotoToVK(img.file);
-                        attachments.push(attach);
-                    }
-                    const attachmentStr = attachments.join(',');
-                    const wallPostUrl = `https://api.vk.com/method/wall.post?owner_id=-${VK_GROUP_ID}&from_group=1&message=${encodeURIComponent(text)}&attachments=${attachmentStr}&access_token=${VK_ACCESS_TOKEN}&v=5.131`;
-                    const postRes = await fetch(wallPostUrl);
-                    const postData = await postRes.json();
-                    if (postData.error) throw new Error(postData.error.error_msg);
-                    alert('✅ Пост успешно опубликован в группе VK!');
-                    closeModal();
-                    if (clearBtn) clearBtn.click();
-                    // обновляем новости на странице
-                    loadVKNews();
-                } catch (err) {
-                    console.error(err);
-                    alert('Ошибка публикации: ' + err.message);
-                } finally {
-                    publishBtn.disabled = false;
-                    publishBtn.textContent = 'Опубликовать';
-                }
-            });
-        }
-
-        // Инициализация при загрузке
-        document.addEventListener('DOMContentLoaded', () => {
+        
+        // При загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
             updateUserInterface();
             loadVKNews();
+            
+            // Инициализируем VK Publisher
+            if (typeof initVKPublisher === 'function') {
+                initVKPublisher();
+            }
         });
     </script>
+    <!-- В секции header-actions, замените содержимое userAuthSection на: -->
+<div id="userAuthSection">
+    <div class="user-balance-header" id="balanceHeader" style="display: none;">
+        <span class="balance-amount" id="headerBalance">0 ₽</span>
+        <button class="btn btn-balance btn-sm" onclick="openBalanceFromHeader()">
+            <i class="fas fa-money-bill-wave"></i>
+        </button>
+    </div>
+    <a href="login_simple.html" class="btn btn-primary">Войти</a>
+</div>
+
+<!-- Добавьте этот скрипт в конце index.html: -->
+<script>
+    // Обновляем хедер при загрузке
+    document.addEventListener('DOMContentLoaded', function() {
+        updateBalanceHeader();
+    });
+    
+    function updateBalanceHeader() {
+        const currentUser = JSON.parse(localStorage.getItem('ucheba_current_user'));
+        const balanceHeader = document.getElementById('balanceHeader');
+        const balanceAmount = document.getElementById('headerBalance');
+        
+        if (currentUser) {
+            // Демо-балансы для разных ролей
+            let balance = 0;
+            if (currentUser.role === 'admin') balance = 0;
+            if (currentUser.role === 'tutor') balance = 85000;
+            if (currentUser.role === 'student') balance = 5000;
+            
+            balanceAmount.textContent = balance.toLocaleString('ru-RU') + ' ₽';
+            balanceHeader.style.display = 'flex';
+        } else {
+            balanceHeader.style.display = 'none';
+        }
+    }
+    
+    function openBalanceFromHeader() {
+        const currentUser = JSON.parse(localStorage.getItem('ucheba_current_user'));
+        if (!currentUser) {
+            alert('Пожалуйста, войдите в систему');
+            window.location.href = 'login_simple.html';
+            return;
+        }
+        
+        // Перенаправляем на соответствующую страницу
+        if (currentUser.role === 'admin') {
+            window.location.href = 'admin_panel.html';
+        } else if (currentUser.role === 'tutor') {
+            window.location.href = 'teacher_dashboard.html';
+        } else {
+            window.location.href = 'profile.html';
+        }
+    }
+</script>
+    <!-- Подключение скрипта VK Publisher -->
+    <script src="js/vk_publisher_simple.js"></script>
 </body>
 </html>
