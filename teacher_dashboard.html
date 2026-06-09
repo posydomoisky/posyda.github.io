@@ -4,766 +4,620 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Панель репетитора - УчебаВместе</title>
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Стили для баланса репетитора */
+        :root {
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --fg: #0f172a;
+            --muted-fg: #475569;
+            --border: #e2e8f0;
+            --primary: #3b82f6;
+            --primary-dark: #1e40af;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+        body.dark {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --fg: #e2e8f0;
+            --muted-fg: #94a3b8;
+            --border: #334155;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.5;
+            transition: background 0.3s, color 0.3s;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; }
+        header {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+        .logo a {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        nav { display: flex; gap: 1.5rem; }
+        nav a {
+            color: var(--fg);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--fg);
+            display: flex;
+            align-items: center;
+        }
+        .user-balance-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg);
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+        }
+        .balance-amount {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .btn-balance {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        .teacher-sidebar {
+            background: var(--card);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            height: fit-content;
+        }
+        .sidebar-avatar img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 1rem;
+            display: block;
+        }
+        .sidebar-info { text-align: center; margin-bottom: 1.5rem; }
+        .teacher-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .teacher-stat-item {
+            background: var(--bg);
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            text-align: center;
+        }
+        .teacher-stat-value { font-size: 1.25rem; font-weight: bold; }
+        .teacher-quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+        .quick-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg);
+            border-radius: 0.75rem;
+            text-decoration: none;
+            color: var(--fg);
+            transition: 0.2s;
+        }
         .tutor-balance-card {
             background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
             color: white;
             border-radius: 1rem;
             padding: 1.5rem;
             margin-bottom: 2rem;
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
         }
-        
         .tutor-balance-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
         }
-        
-        .tutor-balance-header h3 {
-            margin: 0;
-            font-size: 1.25rem;
-        }
-        
         .tutor-balance-amount {
             font-size: 2.5rem;
             font-weight: bold;
-            margin-bottom: 0.5rem;
             text-align: center;
+            margin: 0.5rem 0;
         }
-        
-        .tutor-balance-subtitle {
-            opacity: 0.9;
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-        
         .tutor-balance-stats {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(3,1fr);
             gap: 1rem;
-            margin-top: 1.5rem;
+            margin: 1.5rem 0;
         }
-        
         .tutor-balance-stat {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 1rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.75rem;
             border-radius: 0.5rem;
             text-align: center;
         }
-        
-        .tutor-balance-stat-value {
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin-bottom: 0.25rem;
-        }
-        
-        .tutor-balance-stat-label {
-            font-size: 0.85rem;
-            opacity: 0.8;
-        }
-        
         .tutor-balance-actions {
             display: flex;
             gap: 1rem;
             justify-content: center;
-            margin-top: 1.5rem;
+            margin: 1rem 0;
         }
-        
-        .btn-balance-tutor {
+        .btn-balance-tutor, .btn-balance-outline-tutor {
             background: white;
             color: #1e40af;
             border: none;
-            padding: 0.75rem 1.5rem;
+            padding: 0.6rem 1.2rem;
             border-radius: 0.5rem;
             font-weight: 600;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
-        
-        .btn-balance-tutor:hover {
-            background: #f8fafc;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
-        }
-        
         .btn-balance-outline-tutor {
             background: transparent;
             color: white;
             border: 2px solid white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
-        
-        .btn-balance-outline-tutor:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .payouts-section {
+        .admin-control-card, .payouts-section, .schedule-calendar, .earnings-chart {
             background: var(--card);
             border-radius: 1rem;
             padding: 1.5rem;
-            margin-top: 2rem;
+            margin-bottom: 1.5rem;
             border: 1px solid var(--border);
         }
-        
-        .payouts-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .payouts-list {
+        .lessons-grid, .students-list-grid {
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            margin-top: 1rem;
         }
-        
-        .payout-item {
+        .lesson-card, .student-card {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            background: var(--bg);
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .calendar-week {
+            display: grid;
+            grid-template-columns: repeat(7,1fr);
+            text-align: center;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+        .calendar-slots {
+            display: grid;
+            grid-template-columns: repeat(7,1fr);
+            gap: 0.5rem;
+        }
+        .slot {
             background: var(--bg);
             border-radius: 0.5rem;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            text-align: center;
+            cursor: pointer;
             border: 1px solid var(--border);
         }
-        
-        .payout-status {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.85rem;
-            font-weight: 500;
+        .slot.booked {
+            background: var(--primary);
+            color: white;
         }
-        
-        .status-pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-        
-        .status-paid {
-            background: #dcfce7;
-            color: #15803d;
-        }
-        
-        .status-cancelled {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-        
-        .payout-details {
-            display: flex;
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
             align-items: center;
-            gap: 1rem;
+            justify-content: center;
+            z-index: 1000;
         }
-        
-        .payout-date {
-            color: var(--muted-fg);
-            font-size: 0.9rem;
+        .modal-content {
+            background: var(--card);
+            border-radius: 1rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
         }
-        
-        .payout-amount {
-            font-weight: 600;
+        .modal-header, .modal-footer {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+        }
+        .modal-body { padding: 1rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-control, select, textarea, input {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            background: var(--bg);
             color: var(--fg);
         }
-        
-        .empty-payouts {
-            text-align: center;
-            padding: 2rem;
-            color: var(--muted-fg);
-        }
-        
-        .empty-payouts i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-        
-        .commission-info {
-            background: #f8fafc;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-        }
-        
-        .commission-info p {
-            margin: 0.5rem 0;
-        }
+        .btn { padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; border: none; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: var(--border); color: var(--fg); }
+        .btn-danger { background: var(--danger); color: white; }
+        .payout-status { padding: 0.25rem 0.5rem; border-radius: 1rem; font-size: 0.8rem; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-paid { background: #dcfce7; color: #15803d; }
+        .commission-info { background: var(--bg); padding: 0.75rem; border-radius: 0.5rem; margin-top: 1rem; font-size: 0.9rem; }
+        @media (max-width: 768px) { .dashboard-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header>
         <div class="container">
             <div class="header-content">
-                <div class="logo">
-                    <a href="index.html" class="logo-link">УчебаВместе</a>
-                </div>
-                <nav>
-                    <a href="index.html#subjects">Предметы</a>
-                    <a href="teacher.html">Репетиторы</a>
-                </nav>
+                <div class="logo"><a href="index.html">УчебаВместе</a></div>
+                <nav><a href="teacher.html">Предметы</a><a href="teacher.html">Репетиторы</a></nav>
                 <div class="header-actions">
-                    <button class="theme-toggle" id="themeToggle" aria-label="Переключить тему">
-                        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="5"></circle>
-                            <line x1="12" y1="1" x2="12" y2="3"></line>
-                            <line x1="12" y1="21" x2="12" y2="23"></line>
-                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                            <line x1="1" y1="12" x2="3" y2="12"></line>
-                            <line x1="21" y1="12" x2="23" y2="12"></line>
-                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                        </svg>
-                        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                        </svg>
-                    </button>
-                    <div id="userAuthSection">
-                        <div class="user-balance-header">
-                            <span class="balance-amount">85,000 ₽</span>
-                            <button class="btn btn-balance btn-sm" onclick="manageUserBalance(2, 'tutor')">
-                                <i class="fas fa-money-bill-wave"></i>
-                            </button>
-                        </div>
+                  
+                    <div class="user-balance-header">
+                        <span class="balance-amount" id="headerBalance">85 000 ₽</span>
+                        <button class="btn-balance" onclick="manageUserBalance()"><i class="fas fa-money-bill-wave"></i></button>
                     </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Teacher Dashboard -->
     <section class="teacher-dashboard">
         <div class="container">
             <div class="dashboard-grid">
-                <!-- Sidebar -->
                 <div class="teacher-sidebar">
-                    <div class="sidebar-avatar">
-                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face" alt="Анна Петрова" onerror="this.src='https://ui-avatars.com/api/?name=Анна+Петрова&background=01497c&color=fff&size=400'">
-                    </div>
-                    <div class="sidebar-info">
-                        <h3 id="teacherName">Анна Петрова</h3>
-                        <div class="sidebar-role" id="teacherRole">Репетитор по математике и физике</div>
-                    </div>
-                    
+                    <div class="sidebar-avatar"><img src="https://ui-avatars.com/api/?name=Анна+Петрова&background=01497c&color=fff&size=100" alt="Анна"></div>
+                    <div class="sidebar-info"><h3>Анна Петрова</h3><div>Репетитор по математике и физике</div></div>
                     <div class="teacher-stats">
-                        <div class="teacher-stat-item">
-                            <div class="teacher-stat-value" id="totalStudents">45</div>
-                            <div class="teacher-stat-label">Учеников</div>
-                        </div>
-                        <div class="teacher-stat-item">
-                            <div class="teacher-stat-value" id="totalLessons">320</div>
-                            <div class="teacher-stat-label">Уроков</div>
-                        </div>
-                        <div class="teacher-stat-item">
-                            <div class="teacher-stat-value">4.9</div>
-                            <div class="teacher-stat-label">Рейтинг</div>
-                        </div>
-                        <div class="teacher-stat-item">
-                            <div class="teacher-stat-value" id="monthEarnings">85,000 ₽</div>
-                            <div class="teacher-stat-label">Баланс</div>
-                        </div>
+                        <div class="teacher-stat-item"><div class="teacher-stat-value" id="totalStudents">0</div><div>Учеников</div></div>
+                        <div class="teacher-stat-item"><div class="teacher-stat-value" id="totalLessons">0</div><div>Уроков</div></div>
+                        <div class="teacher-stat-item"><div class="teacher-stat-value">4.9</div><div>Рейтинг</div></div>
+                        <div class="teacher-stat-item"><div class="teacher-stat-value" id="sidebarBalance">0 ₽</div><div>Баланс</div></div>
                     </div>
-                    
                     <div class="teacher-quick-actions">
-                        <a href="#schedule" class="quick-action-btn">
-                            <i class="fas fa-calendar-alt"></i>
-                            Расписание
-                        </a>
-                        <a href="#students" class="quick-action-btn">
-                            <i class="fas fa-users"></i>
-                            Мои ученики
-                        </a>
-                        <a href="#earnings" class="quick-action-btn">
-                            <i class="fas fa-chart-line"></i>
-                            Финансы
-                        </a>
-                        <a href="#balance" class="quick-action-btn">
-                            <i class="fas fa-money-bill-wave"></i>
-                            Баланс и выплаты
-                        </a>
-                        <a href="#materials" class="quick-action-btn">
-                            <i class="fas fa-book"></i>
-                            Материалы
-                        </a>
+                        <a href="#schedule" class="quick-action-btn"><i class="fas fa-calendar-alt"></i> Расписание</a>
+                        <a href="#students" class="quick-action-btn"><i class="fas fa-users"></i> Мои ученики</a>
+                        <a href="#earnings" class="quick-action-btn"><i class="fas fa-chart-line"></i> Финансы</a>
+                        <a href="#balance" class="quick-action-btn"><i class="fas fa-money-bill-wave"></i> Баланс и выплаты</a>
                     </div>
                 </div>
 
-                <!-- Main Content -->
                 <div class="teacher-main-content">
-                    <!-- Карточка баланса репетитора -->
                     <div class="tutor-balance-card" id="balance">
-                        <div class="tutor-balance-header">
-                            <h3><i class="fas fa-money-bill-wave"></i> Мой баланс</h3>
-                            <button class="btn-balance-outline-tutor" onclick="showUserOperations(2, 'tutor')">
-                                <i class="fas fa-history"></i> История
-                            </button>
-                        </div>
-                        
-                        <div class="tutor-balance-amount" id="tutorBalanceAmount">85,000 ₽</div>
+                        <div class="tutor-balance-header"><h3><i class="fas fa-money-bill-wave"></i> Мой баланс</h3><button class="btn-balance-outline-tutor" onclick="showUserOperations()"><i class="fas fa-history"></i> История</button></div>
+                        <div class="tutor-balance-amount" id="tutorBalanceAmount">85 000 ₽</div>
                         <div class="tutor-balance-subtitle">Доступно для вывода</div>
-                        
                         <div class="tutor-balance-stats">
-                            <div class="tutor-balance-stat">
-                                <div class="tutor-balance-stat-value" id="tutorThisMonth">25,000 ₽</div>
-                                <div class="tutor-balance-stat-label">За декабрь</div>
-                            </div>
-                            <div class="tutor-balance-stat">
-                                <div class="tutor-balance-stat-value" id="tutorPending">15,000 ₽</div>
-                                <div class="tutor-balance-stat-label">Ожидает</div>
-                            </div>
-                            <div class="tutor-balance-stat">
-                                <div class="tutor-balance-stat-value" id="tutorAvgLesson">2,500 ₽</div>
-                                <div class="tutor-balance-stat-label">Средний урок</div>
-                            </div>
+                            <div class="tutor-balance-stat"><div class="tutor-balance-stat-value" id="tutorThisMonth">0 ₽</div><div>За декабрь</div></div>
+                            <div class="tutor-balance-stat"><div class="tutor-balance-stat-value" id="tutorPending">0 ₽</div><div>Ожидает</div></div>
+                            <div class="tutor-balance-stat"><div class="tutor-balance-stat-value" id="tutorAvgLesson">0 ₽</div><div>Средний урок</div></div>
                         </div>
-                        
                         <div class="tutor-balance-actions">
-                            <button class="btn-balance-tutor" onclick="requestPayout()">
-                                <i class="fas fa-credit-card"></i> Заказать выплату
-                            </button>
-                            <button class="btn-balance-outline-tutor" onclick="manageUserBalance(2, 'tutor')">
-                                <i class="fas fa-cog"></i> Управление
-                            </button>
+                            <button class="btn-balance-tutor" onclick="requestPayout()"><i class="fas fa-credit-card"></i> Заказать выплату</button>
+                            <button class="btn-balance-outline-tutor" onclick="manageUserBalance()"><i class="fas fa-cog"></i> Управление</button>
                         </div>
-                        
-                        <div class="commission-info">
-                            <p><i class="fas fa-info-circle"></i> Комиссия сервиса: 15% с каждого урока</p>
-                            <p>Минимальная сумма для вывода: 3,000 ₽</p>
-                        </div>
+                        <div class="commission-info"><p><i class="fas fa-info-circle"></i> Комиссия сервиса: 15% с каждого урока</p><p>Минимальная сумма для вывода: 3 000 ₽</p></div>
                     </div>
 
-                    <!-- Upcoming Lessons -->
-                    <div class="admin-control-card">
-                        <h3>Ближайшие уроки</h3>
-                        <div class="lessons-grid" id="upcomingLessons">
-                            <!-- Lessons will be loaded here -->
-                        </div>
-                    </div>
+                    <div class="admin-control-card"><h3>Ближайшие уроки</h3><div class="lessons-grid" id="upcomingLessons"></div></div>
 
-                    <!-- Выплаты -->
                     <div class="payouts-section">
-                        <div class="payouts-header">
-                            <h3><i class="fas fa-credit-card"></i> История выплат</h3>
-                            <button class="btn btn-primary btn-sm" onclick="requestPayout()">
-                                <i class="fas fa-plus"></i> Новая выплата
-                            </button>
-                        </div>
-                        
-                        <div class="payouts-list" id="payoutsList">
-                            <div class="payout-item">
-                                <div class="payout-details">
-                                    <div>
-                                        <strong>Выплата #12345</strong>
-                                        <div class="payout-date">15 декабря 2024</div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <span class="payout-amount">50,000 ₽</span>
-                                    <span class="payout-status status-paid">Выплачено</span>
-                                </div>
-                            </div>
-                            
-                            <div class="payout-item">
-                                <div class="payout-details">
-                                    <div>
-                                        <strong>Выплата #12344</strong>
-                                        <div class="payout-date">30 ноября 2024</div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <span class="payout-amount">45,000 ₽</span>
-                                    <span class="payout-status status-paid">Выплачено</span>
-                                </div>
-                            </div>
-                            
-                            <div class="payout-item">
-                                <div class="payout-details">
-                                    <div>
-                                        <strong>Запрос на выплату</strong>
-                                        <div class="payout-date">Ожидает обработки</div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <span class="payout-amount">15,000 ₽</span>
-                                    <span class="payout-status status-pending">Ожидание</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="empty-payouts" id="emptyPayouts" style="display: none;">
-                            <i class="fas fa-wallet"></i>
-                            <h4>Выплат пока нет</h4>
-                            <p>После проведения уроков вы сможете запросить выплату средств</p>
-                        </div>
+                        <div class="payouts-header"><h3><i class="fas fa-credit-card"></i> История выплат</h3><button class="btn btn-primary btn-sm" onclick="requestPayout()"><i class="fas fa-plus"></i> Новая выплата</button></div>
+                        <div class="payouts-list" id="payoutsList"></div>
                     </div>
 
-                    <!-- Schedule -->
                     <div class="schedule-calendar" id="schedule">
-                        <div class="calendar-header">
-                            <h3>Расписание на неделю</h3>
-                            <div class="calendar-nav">
-                                <button class="btn btn-sm btn-outline" onclick="prevWeek()">←</button>
-                                <span id="currentWeek">11-17 Декабря 2024</span>
-                                <button class="btn btn-sm btn-outline" onclick="nextWeek()">→</button>
-                            </div>
-                        </div>
-                        <div class="calendar-week">
-                            <div class="week-day">Пн</div>
-                            <div class="week-day">Вт</div>
-                            <div class="week-day">Ср</div>
-                            <div class="week-day">Чт</div>
-                            <div class="week-day">Пт</div>
-                            <div class="week-day">Сб</div>
-                            <div class="week-day">Вс</div>
-                        </div>
-                        <div class="calendar-slots" id="weeklySchedule">
-                            <!-- Time slots will be generated here -->
-                        </div>
+                        <div class="calendar-header"><h3>Расписание на неделю</h3><div><button class="btn btn-sm btn-outline" onclick="prevWeek()">←</button><span id="currentWeek"></span><button class="btn btn-sm btn-outline" onclick="nextWeek()">→</button></div></div>
+                        <div class="calendar-week"><div class="week-day">Пн</div><div class="week-day">Вт</div><div class="week-day">Ср</div><div class="week-day">Чт</div><div class="week-day">Пт</div><div class="week-day">Сб</div><div class="week-day">Вс</div></div>
+                        <div class="calendar-slots" id="weeklySchedule"></div>
                     </div>
 
-                    <!-- Students -->
-                    <div class="admin-control-card" id="students">
-                        <div class="calendar-header">
-                            <h3>Мои ученики</h3>
-                            <button class="btn btn-primary btn-sm" onclick="exportStudents()">Экспорт списка</button>
-                        </div>
-                        <div class="students-list-grid" id="studentsList">
-                            <!-- Students will be loaded here -->
-                        </div>
-                    </div>
+                    <div class="admin-control-card" id="students"><div class="calendar-header"><h3>Мои ученики</h3><button class="btn btn-primary btn-sm" onclick="exportStudents()">Экспорт списка</button></div><div class="students-list-grid" id="studentsList"></div></div>
 
-                    <!-- Earnings -->
-                    <div class="earnings-chart" id="earnings">
-                        <div class="chart-header">
-                            <h3>Статистика доходов</h3>
-                            <select id="earningsPeriod" class="form-control" style="width: auto;">
-                                <option value="month">Этот месяц</option>
-                                <option value="quarter">Квартал</option>
-                                <option value="year">Год</option>
-                            </select>
-                        </div>
-                        <div class="chart-container" id="earningsChart">
-                            <!-- Chart will be generated here -->
-                            <div style="display: flex; align-items: flex-end; height: 100%; gap: 20px; padding: 20px;">
-                                <div style="flex: 1; background: var(--primary); height: 80%; border-radius: 4px;"></div>
-                                <div style="flex: 1; background: var(--primary); height: 65%; border-radius: 4px;"></div>
-                                <div style="flex: 1; background: var(--primary); height: 90%; border-radius: 4px;"></div>
-                                <div style="flex: 1; background: var(--primary); height: 55%; border-radius: 4px;"></div>
-                                <div style="flex: 1; background: var(--primary); height: 75%; border-radius: 4px;"></div>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="earnings-chart" id="earnings"><div class="chart-header"><h3>Статистика доходов</h3><select id="earningsPeriod" onchange="renderEarningsChart()"><option value="month">Этот месяц</option><option value="quarter">Квартал</option><option value="year">Год</option></select></div><div class="chart-container" id="earningsChart" style="height: 200px; display: flex; align-items: flex-end; gap: 20px; padding: 20px;"></div></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Balance Management Modal -->
-    <div class="modal" id="balanceModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-money-bill-wave"></i> Управление балансом</h2>
-                <button class="modal-close" onclick="closeModal('balanceModal')">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="balance-info">
-                    <p><strong>Пользователь:</strong> <span id="balanceUserName">Анна Петрова</span></p>
-                    <p><strong>Текущий баланс:</strong> <span id="currentUserBalance" class="balance-positive">85,000 ₽</span></p>
-                    <p><strong>Роль:</strong> <span id="balanceUserRole">Репетитор</span></p>
-                </div>
-                
-                <form id="balanceForm">
-                    <input type="hidden" id="balanceUserId" value="2">
-                    <input type="hidden" id="balanceUserType" value="tutor">
-                    
-                    <div class="form-group">
-                        <label for="operationType">Тип операции</label>
-                        <select id="operationType" class="form-control">
-                            <option value="salary">Выплата зарплаты</option>
-                            <option value="bonus">Бонус</option>
-                            <option value="correction">Корректировка</option>
-                            <option value="refund">Возврат</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="amount">Сумма (₽)</label>
-                        <input type="number" id="amount" class="form-control" min="1" required value="10000">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="comment">Комментарий</label>
-                        <textarea id="comment" class="form-control" rows="3" placeholder="Причина операции...">Выплата за декабрь</textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="payoutMethod">Способ выплаты</label>
-                        <select id="payoutMethod" class="form-control">
-                            <option value="bank">Банковская карта</option>
-                            <option value="yoomoney">ЮMoney</option>
-                            <option value="sberbank">Сбербанк Онлайн</option>
-                            <option value="qiwi">QIWI</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('balanceModal')">Отмена</button>
-                <button class="btn btn-primary" onclick="processBalanceOperation()">Выполнить операцию</button>
-            </div>
-        </div>
-    </div>
+    <!-- Модалки -->
+    <div id="balanceModal" class="modal"><div class="modal-content"><div class="modal-header"><h2>Управление балансом</h2><button class="modal-close" onclick="closeModal('balanceModal')">×</button></div><div class="modal-body"><div class="balance-info"><p><strong>Пользователь:</strong> Анна Петрова</p><p><strong>Текущий баланс:</strong> <span id="currentUserBalance">0 ₽</span></p></div><form id="balanceForm"><div class="form-group"><label>Тип операции</label><select id="operationType"><option value="salary">Выплата зарплаты</option><option value="bonus">Бонус</option><option value="correction">Корректировка</option></select></div><div class="form-group"><label>Сумма (₽)</label><input type="number" id="amount" class="form-control" value="5000"></div><div class="form-group"><label>Комментарий</label><textarea id="comment" class="form-control" rows="2">Выплата</textarea></div></form></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('balanceModal')">Отмена</button><button class="btn btn-primary" onclick="processBalanceOperation()">Выполнить</button></div></div></div>
 
-    <!-- Operations History Modal -->
-    <div class="modal" id="operationsModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>История операций</h2>
-                <button class="modal-close" onclick="closeModal('operationsModal')">×</button>
-            </div>
-            <div class="modal-body">
-                <div id="operationsModalContent">
-                    <div style="text-align: center; padding: 2rem;">
-                        <i class="fas fa-history" style="font-size: 3rem; color: var(--muted-fg); margin-bottom: 1rem;"></i>
-                        <h3>История операций репетитора</h3>
-                        <p>Загрузка истории операций...</p>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('operationsModal')">Закрыть</button>
-            </div>
-        </div>
-    </div>
+    <div id="operationsModal" class="modal"><div class="modal-content"><div class="modal-header"><h2>История операций</h2><button class="modal-close" onclick="closeModal('operationsModal')">×</button></div><div class="modal-body" id="operationsListModal"></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('operationsModal')">Закрыть</button></div></div></div>
 
-    <!-- Payout Request Modal -->
-    <div class="modal" id="payoutModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-credit-card"></i> Запрос выплаты</h2>
-                <button class="modal-close" onclick="closeModal('payoutModal')">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="balance-info">
-                    <p><strong>Доступно для вывода:</strong> <span class="balance-positive">85,000 ₽</span></p>
-                    <p><strong>Минимальная сумма:</strong> <span>3,000 ₽</span></p>
-                </div>
-                
-                <form id="payoutForm">
-                    <div class="form-group">
-                        <label for="payoutAmount">Сумма выплаты (₽)</label>
-                        <input type="number" id="payoutAmount" class="form-control" min="3000" max="85000" value="85000" required>
-                        <small>Минимум: 3,000 ₽, Максимум: 85,000 ₽</small>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="payoutMethodRequest">Способ получения</label>
-                        <select id="payoutMethodRequest" class="form-control" required>
-                            <option value="">Выберите способ</option>
-                            <option value="bank_card">Банковская карта</option>
-                            <option value="sberbank">Сбербанк Онлайн</option>
-                            <option value="yoomoney">ЮMoney</option>
-                            <option value="qiwi">QIWI Кошелек</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="payoutDetails">Реквизиты для выплаты</label>
-                        <textarea id="payoutDetails" class="form-control" rows="3" placeholder="Номер карты/счета, ФИО получателя..." required></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="payoutComment">Комментарий (необязательно)</label>
-                        <input type="text" id="payoutComment" class="form-control" placeholder="Например: выплата за декабрь">
-                    </div>
-                    
-                    <div class="commission-info" style="margin-top: 1rem;">
-                        <p><i class="fas fa-info-circle"></i> Комиссия сервиса за вывод: 1.5% (минимум 50 ₽)</p>
-                        <p><strong>К получению:</strong> <span id="payoutNetAmount">83,725 ₽</span></p>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('payoutModal')">Отмена</button>
-                <button class="btn btn-primary" onclick="submitPayoutRequest()">Запросить выплату</button>
-            </div>
-        </div>
-    </div>
+    <div id="payoutModal" class="modal"><div class="modal-content"><div class="modal-header"><h2>Запрос выплаты</h2><button class="modal-close" onclick="closeModal('payoutModal')">×</button></div><div class="modal-body"><div class="balance-info"><p>Доступно: <span id="availableBalance">0 ₽</span></p><p>Минимум: 3 000 ₽</p></div><div class="form-group"><label>Сумма</label><input type="number" id="payoutAmount" class="form-control" min="3000" step="100"></div><div class="form-group"><label>Способ</label><select id="payoutMethodRequest"><option value="bank_card">Банковская карта</option><option value="sberbank">Сбербанк Онлайн</option></select></div><div class="form-group"><label>Реквизиты</label><textarea id="payoutDetails" class="form-control" required></textarea></div><div class="commission-info"><p>Комиссия за вывод: 1.5% (мин 50 ₽)</p><p><strong>К получению:</strong> <span id="payoutNetAmount">0 ₽</span></p></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('payoutModal')">Отмена</button><button class="btn btn-primary" onclick="submitPayoutRequest()">Запросить</button></div></div></div>
 
-    <!-- Lesson Details Modal -->
-    <div class="modal" id="lessonDetailsModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Детали урока</h2>
-                <button class="modal-close" onclick="closeModal('lessonDetailsModal')">×</button>
-            </div>
-            <div id="lessonDetailsContent">
-                <!-- Lesson details will be loaded here -->
-            </div>
-            <div class="teacher-actions" id="lessonActions">
-                <!-- Action buttons will be loaded here -->
-            </div>
-        </div>
-    </div>
+    <div id="lessonDetailsModal" class="modal"><div class="modal-content"><div class="modal-header"><h2>Детали урока</h2><button onclick="closeModal('lessonDetailsModal')">×</button></div><div id="lessonDetailsContent"></div><div class="modal-footer"><button class="btn btn-danger" id="cancelLessonBtn">Отменить урок</button></div></div></div>
 
-    <!-- Cancel Lesson Modal -->
-    <div class="modal" id="cancelLessonModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Отмена урока</h2>
-                <button class="modal-close" onclick="closeModal('cancelLessonModal')">×</button>
-            </div>
-            <form id="cancelLessonForm">
-                <input type="hidden" id="cancelLessonId">
-                <div class="form-group">
-                    <label for="cancelReason">Причина отмены</label>
-                    <textarea id="cancelReason" rows="4" placeholder="Укажите причину отмены урока..." required></textarea>
-                </div>
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="notifyStudent" checked>
-                        Уведомить ученика по email
-                    </label>
-                </div>
-                <button type="submit" class="btn btn-danger btn-full">Отменить урок</button>
-            </form>
-        </div>
-    </div>
-
-    <script src="js/main.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/teacher_dashboard.js"></script>
-    
     <script>
-        // Простые функции для управления балансом репетитора
-        let tutorBalance = 85000;
-        
-        function manageUserBalance(userId, userType) {
-            document.getElementById('balanceModal').style.display = 'block';
-        }
-        
-        function showUserOperations(userId, userType) {
-            document.getElementById('operationsModal').style.display = 'block';
-        }
-        
-        function requestPayout() {
-            document.getElementById('payoutModal').style.display = 'block';
-            
-            // Рассчитать чистую сумму после комиссии
-            const amount = document.getElementById('payoutAmount').value;
-            const commission = amount * 0.015;
-            const netAmount = amount - Math.max(commission, 50);
-            
-            document.getElementById('payoutNetAmount').textContent = 
-                netAmount.toLocaleString('ru-RU') + ' ₽';
-        }
-        
-        function submitPayoutRequest() {
-            const amount = document.getElementById('payoutAmount').value;
-            const method = document.getElementById('payoutMethodRequest').value;
-            const details = document.getElementById('payoutDetails').value;
-            
-            if (!method) {
-                alert('Выберите способ получения');
-                return;
-            }
-            
-            if (!details) {
-                alert('Введите реквизиты для выплаты');
-                return;
-            }
-            
-            alert(`Запрос на выплату ${amount} ₽ отправлен!\nСпособ: ${method}\nРеквизиты: ${details}`);
-            closeModal('payoutModal');
-            
-            // Обновить баланс
-            tutorBalance -= parseInt(amount);
-            document.getElementById('tutorBalanceAmount').textContent = 
-                tutorBalance.toLocaleString('ru-RU') + ' ₽';
-        }
-        
-        function processBalanceOperation() {
-            const operationType = document.getElementById('operationType').value;
-            const amount = document.getElementById('amount').value;
-            const comment = document.getElementById('comment').value;
-            
-            alert(`Операция "${operationType}" на сумму ${amount} ₽ выполнена!\nКомментарий: ${comment}`);
-            closeModal('balanceModal');
-        }
-        
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-        
-        // Расчет комиссии при изменении суммы выплаты
-        document.addEventListener('DOMContentLoaded', function() {
-            const payoutAmountInput = document.getElementById('payoutAmount');
-            if (payoutAmountInput) {
-                payoutAmountInput.addEventListener('input', function() {
-                    const amount = this.value;
-                    const commission = amount * 0.015;
-                    const netAmount = amount - Math.max(commission, 50);
-                    
-                    document.getElementById('payoutNetAmount').textContent = 
-                        netAmount.toLocaleString('ru-RU') + ' ₽';
-                });
-            }
-            
-            // Добавим стили для user-balance-header
-            const style = document.createElement('style');
-            style.textContent = `
-                .user-balance-header {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                    margin-right: 1rem;
-                }
-                .balance-amount {
-                    font-weight: 600;
-                    color: var(--primary);
-                }
-                .btn-balance {
-                    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-                    color: white;
-                    border: none;
-                    padding: 0.5rem 1rem;
-                    border-radius: 0.5rem;
-                    cursor: pointer;
-                }
-                .btn-balance:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-                }
-            `;
-            document.head.appendChild(style);
-        });
-        
-        // Закрытие модальных окон при клике вне их
-        window.onclick = function(event) {
-            const modals = ['balanceModal', 'operationsModal', 'payoutModal', 'lessonDetailsModal', 'cancelLessonModal'];
-            modals.forEach(modalId => {
-                const modal = document.getElementById(modalId);
-                if (event.target === modal) {
-                    closeModal(modalId);
-                }
-            });
+        // ---------- ДАННЫЕ И ХРАНИЛИЩЕ ----------
+        let tutorData = {
+            id: 2,
+            name: "Анна Петрова",
+            balance: 85000,
+            totalLessons: 0,
+            totalStudents: 0,
+            avgLessonPrice: 2500
         };
+        let students = [
+            { id: 101, name: "Михаил Смирнов", lessonsCount: 12, totalPaid: 30000 },
+            { id: 102, name: "Екатерина Иванова", lessonsCount: 8, totalPaid: 20000 },
+            { id: 103, name: "Дмитрий Орлов", lessonsCount: 5, totalPaid: 12500 }
+        ];
+        let lessons = [
+            { id: 1, studentId: 101, studentName: "Михаил Смирнов", subject: "Математика", date: "2026-06-10", time: "10:00", duration: 60, price: 2500, status: "completed", paid: true },
+            { id: 2, studentId: 102, studentName: "Екатерина Иванова", subject: "Физика", date: "2026-06-12", time: "14:00", duration: 60, price: 2500, status: "completed", paid: true },
+            { id: 3, studentId: 101, studentName: "Михаил Смирнов", subject: "Математика", date: getFutureDate(1), time: "11:00", duration: 60, price: 2500, status: "scheduled", paid: false },
+            { id: 4, studentId: 103, studentName: "Дмитрий Орлов", subject: "Физика", date: getFutureDate(3), time: "16:00", duration: 60, price: 2500, status: "scheduled", paid: false }
+        ];
+        let payouts = [
+            { id: "P1", amount: 50000, date: "2024-12-15", status: "paid", method: "bank_card" },
+            { id: "P2", amount: 45000, date: "2024-11-30", status: "paid", method: "sberbank" }
+        ];
+        let operations = [
+            { id: 1, type: "lesson", amount: 2500, comment: "Урок с Михаилом Смирновым", date: "2026-06-10", balanceAfter: 85000 },
+            { id: 2, type: "lesson", amount: 2500, comment: "Урок с Екатериной Ивановой", date: "2026-06-12", balanceAfter: 87500 },
+            { id: 3, type: "payout", amount: -50000, comment: "Выплата на карту", date: "2024-12-15", balanceAfter: 37500 }
+        ];
+        let pendingPayout = null;
+
+        function getFutureDate(days) {
+            let d = new Date();
+            d.setDate(d.getDate() + days);
+            return d.toISOString().slice(0,10);
+        }
+
+        function saveToLocal() {
+            localStorage.setItem("tutorData", JSON.stringify(tutorData));
+            localStorage.setItem("students", JSON.stringify(students));
+            localStorage.setItem("lessons", JSON.stringify(lessons));
+            localStorage.setItem("payouts", JSON.stringify(payouts));
+            localStorage.setItem("operations", JSON.stringify(operations));
+        }
+        function loadFromLocal() {
+            let td = localStorage.getItem("tutorData");
+            if(td) tutorData = JSON.parse(td);
+            let stud = localStorage.getItem("students");
+            if(stud) students = JSON.parse(stud);
+            let less = localStorage.getItem("lessons");
+            if(less) lessons = JSON.parse(less);
+            let pay = localStorage.getItem("payouts");
+            if(pay) payouts = JSON.parse(pay);
+            let ops = localStorage.getItem("operations");
+            if(ops) operations = JSON.parse(ops);
+            updateStats();
+        }
+        function updateStats() {
+            tutorData.totalStudents = students.length;
+            tutorData.totalLessons = lessons.filter(l=>l.status==='completed').length;
+            tutorData.avgLessonPrice = Math.round(lessons.reduce((s,l)=>s+l.price,0)/ (lessons.length||1));
+            document.getElementById("totalStudents").innerText = tutorData.totalStudents;
+            document.getElementById("totalLessons").innerText = tutorData.totalLessons;
+            document.getElementById("sidebarBalance").innerHTML = tutorData.balance.toLocaleString()+' ₽';
+            document.getElementById("headerBalance").innerHTML = tutorData.balance.toLocaleString()+' ₽';
+            document.getElementById("tutorBalanceAmount").innerHTML = tutorData.balance.toLocaleString()+' ₽';
+            document.getElementById("currentUserBalance").innerHTML = tutorData.balance.toLocaleString()+' ₽';
+            let monthEarn = operations.filter(op=>op.type==='lesson' && new Date(op.date).getMonth()===new Date().getMonth()).reduce((s,o)=>s+o.amount,0);
+            document.getElementById("tutorThisMonth").innerHTML = monthEarn.toLocaleString()+' ₽';
+            let pendingSum = payouts.filter(p=>p.status==='pending').reduce((s,p)=>s+p.amount,0);
+            document.getElementById("tutorPending").innerHTML = pendingSum.toLocaleString()+' ₽';
+            document.getElementById("tutorAvgLesson").innerHTML = tutorData.avgLessonPrice.toLocaleString()+' ₽';
+            renderUpcomingLessons();
+            renderStudentsList();
+            renderPayouts();
+            renderSchedule();
+            renderEarningsChart();
+        }
+        function renderUpcomingLessons() {
+            let container = document.getElementById("upcomingLessons");
+            let upcoming = lessons.filter(l=>l.status==='scheduled' && l.date >= new Date().toISOString().slice(0,10)).sort((a,b)=>a.date.localeCompare(b.date));
+            if(upcoming.length===0) { container.innerHTML="<div class='lesson-card'>Нет ближайших уроков</div>"; return; }
+            container.innerHTML = upcoming.map(l=>`<div class='lesson-card' onclick='showLessonDetails(${l.id})'><div><strong>${l.studentName}</strong> - ${l.subject}<br><small>${l.date} ${l.time}</small></div><div>${l.price} ₽</div></div>`).join('');
+        }
+        function renderStudentsList() {
+            let container = document.getElementById("studentsList");
+            container.innerHTML = students.map(s=>`<div class='student-card'><div><strong>${s.name}</strong><br>${s.lessonsCount} уроков</div><div>Оплачено: ${s.totalPaid.toLocaleString()} ₽</div></div>`).join('');
+        }
+        function renderPayouts() {
+            let container = document.getElementById("payoutsList");
+            if(payouts.length===0) { container.innerHTML="<div class='empty-payouts'>Нет выплат</div>"; return; }
+            container.innerHTML = payouts.map(p=>`<div class='payout-item'><div><strong>Выплата ${p.id}</strong><div class='payout-date'>${p.date}</div></div><div><span class='payout-amount'>${p.amount.toLocaleString()} ₽</span><span class='payout-status status-${p.status}'>${p.status==='paid'?'Выплачено':'Ожидание'}</span></div></div>`).join('');
+        }
+        // Расписание
+        let currentWeekOffset = 0;
+        function getWeekDates(offset) {
+            let now = new Date();
+            now.setDate(now.getDate() + offset*7);
+            let day = now.getDay();
+            let diff = day===0? -6 : 1-day;
+            let monday = new Date(now); monday.setDate(now.getDate()+diff);
+            let week = [];
+            for(let i=0;i<7;i++){ let d=new Date(monday); d.setDate(monday.getDate()+i); week.push(d.toISOString().slice(0,10));}
+            return week;
+        }
+        function renderSchedule() {
+            let dates = getWeekDates(currentWeekOffset);
+            document.getElementById("currentWeek").innerText = `${dates[0]} — ${dates[6]}`;
+            let container = document.getElementById("weeklySchedule");
+            container.innerHTML = '';
+            for(let i=0;i<7;i++){
+                let daySlots = lessons.filter(l=>l.date===dates[i]);
+                let div = document.createElement('div');
+                div.className = 'slot';
+                if(daySlots.length) div.classList.add('booked');
+                div.innerHTML = daySlots.length ? `${daySlots.map(l=>l.time.slice(0,5)).join(', ')}` : '—';
+                div.onclick = ()=> alert(daySlots.length ? `Уроки: ${daySlots.map(l=>`${l.time} ${l.studentName}`).join('; ')}` : "Свободно");
+                container.appendChild(div);
+            }
+        }
+        function prevWeek(){ currentWeekOffset--; renderSchedule(); }
+        function nextWeek(){ currentWeekOffset++; renderSchedule(); }
+
+        function showLessonDetails(lessonId){
+            let lesson = lessons.find(l=>l.id===lessonId);
+            if(!lesson) return;
+            document.getElementById("lessonDetailsContent").innerHTML = `<p><strong>Ученик:</strong> ${lesson.studentName}</p><p><strong>Предмет:</strong> ${lesson.subject}</p><p><strong>Дата:</strong> ${lesson.date} ${lesson.time}</p><p><strong>Цена:</strong> ${lesson.price} ₽</p><p><strong>Статус:</strong> ${lesson.status}</p>`;
+            let btn = document.getElementById("cancelLessonBtn");
+            btn.onclick = ()=>{ if(lesson.status==='scheduled') cancelLesson(lessonId); else alert("Можно отменить только запланированный урок"); };
+            document.getElementById("lessonDetailsModal").style.display = "flex";
+        }
+        function cancelLesson(id){
+            let idx = lessons.findIndex(l=>l.id===id);
+            if(idx!==-1 && lessons[idx].status==='scheduled'){
+                lessons[idx].status = 'cancelled';
+                saveToLocal(); updateStats(); renderSchedule(); renderUpcomingLessons();
+                closeModal('lessonDetailsModal');
+                alert("Урок отменен");
+            }
+        }
+
+        // Баланс и операции
+        function manageUserBalance(){
+            document.getElementById("balanceModal").style.display = "flex";
+        }
+        function processBalanceOperation(){
+            let type = document.getElementById("operationType").value;
+            let amount = parseInt(document.getElementById("amount").value);
+            let comment = document.getElementById("comment").value;
+            if(isNaN(amount)) return;
+            let newBalance = tutorData.balance + amount;
+            tutorData.balance = newBalance;
+            operations.unshift({ id: Date.now(), type: type, amount: amount, comment: comment, date: new Date().toISOString().slice(0,10), balanceAfter: newBalance });
+            saveToLocal();
+            updateStats();
+            closeModal('balanceModal');
+            alert(`Операция ${type} на ${amount} ₽ выполнена`);
+        }
+        function showUserOperations(){
+            let container = document.getElementById("operationsListModal");
+            if(operations.length===0) container.innerHTML = "<p>Нет операций</p>";
+            else container.innerHTML = operations.map(op=>`<div style='border-bottom:1px solid var(--border); padding:0.5rem'><small>${op.date}</small><div><strong>${op.type}</strong>: ${op.amount>0?`+${op.amount}`:op.amount} ₽</div><div>${op.comment}</div><div>Баланс: ${op.balanceAfter} ₽</div></div>`).join('');
+            document.getElementById("operationsModal").style.display = "flex";
+        }
+        function requestPayout(){
+            document.getElementById("availableBalance").innerHTML = tutorData.balance.toLocaleString()+' ₽';
+            document.getElementById("payoutAmount").value = Math.min(50000, tutorData.balance);
+            updatePayoutNet();
+            document.getElementById("payoutModal").style.display = "flex";
+        }
+        function updatePayoutNet(){
+            let amount = parseInt(document.getElementById("payoutAmount").value) || 0;
+            let commission = Math.max(amount*0.015, 50);
+            let net = amount - commission;
+            document.getElementById("payoutNetAmount").innerHTML = net.toLocaleString()+' ₽';
+        }
+        function submitPayoutRequest(){
+            let amount = parseInt(document.getElementById("payoutAmount").value);
+            let method = document.getElementById("payoutMethodRequest").value;
+            let details = document.getElementById("payoutDetails").value;
+            if(amount < 3000) { alert("Минимум 3000 ₽"); return; }
+            if(amount > tutorData.balance) { alert("Недостаточно средств"); return; }
+            if(!details) { alert("Введите реквизиты"); return; }
+            tutorData.balance -= amount;
+            let newPayout = { id: "PAY"+Date.now(), amount: amount, date: new Date().toISOString().slice(0,10), status: "pending", method: method, details: details };
+            payouts.push(newPayout);
+            operations.unshift({ id: Date.now(), type: "payout_request", amount: -amount, comment: `Запрос выплаты ${amount} ₽ ${method}`, date: new Date().toISOString().slice(0,10), balanceAfter: tutorData.balance });
+            saveToLocal();
+            updateStats();
+            closeModal('payoutModal');
+            alert(`Запрос на ${amount} ₽ отправлен!`);
+        }
+        function exportStudents(){
+            let csv = "Имя,Кол-во уроков,Оплачено\n"+students.map(s=>`${s.name},${s.lessonsCount},${s.totalPaid}`).join("\n");
+            let blob = new Blob([csv], {type:"text/csv"});
+            let a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download="students.csv"; a.click();
+        }
+        function renderEarningsChart(){
+            let period = document.getElementById("earningsPeriod").value;
+            let now = new Date();
+            let data = [];
+            if(period==='month'){
+                let days = Array.from({length:30},(_,i)=> i+1);
+                data = days.map(d=> ({ label: d, amount: operations.filter(op=>op.type==='lesson' && new Date(op.date).getDate()===d && new Date(op.date).getMonth()===now.getMonth()).reduce((s,o)=>s+o.amount,0) }));
+            } else if(period==='quarter'){
+                let months = [];
+                for(let i=2;i>=0;i--){ let m = new Date(now.getFullYear(), now.getMonth()-i,1); months.push(m.toLocaleString('ru',{month:'short'})); }
+                data = months.map((m,i)=> {
+                    let monthIdx = (now.getMonth()-2+i+12)%12;
+                    let amount = operations.filter(op=>op.type==='lesson' && new Date(op.date).getMonth()===monthIdx && new Date(op.date).getFullYear()===now.getFullYear()).reduce((s,o)=>s+o.amount,0);
+                    return { label: m, amount };
+                });
+            } else {
+                let years = [now.getFullYear()-1, now.getFullYear()];
+                data = years.map(y=> ({ label: y, amount: operations.filter(op=>op.type==='lesson' && new Date(op.date).getFullYear()===y).reduce((s,o)=>s+o.amount,0) }));
+            }
+            let max = Math.max(...data.map(d=>d.amount),1);
+            let chartDiv = document.getElementById("earningsChart");
+            chartDiv.innerHTML = data.map(d=>`<div style="flex:1; display:flex; flex-direction:column; align-items:center;"><div style="background: var(--primary); height: ${(d.amount/max)*100}%; width:100%; min-height:4px; border-radius:4px;"></div><span style="font-size:12px;">${d.label}</span><span>${d.amount.toLocaleString()}₽</span></div>`).join('');
+        }
+
+        function closeModal(id){ document.getElementById(id).style.display = "none"; }
+        window.onclick = function(e){ if(e.target.classList.contains('modal')) e.target.style.display='none'; };
+
+        // Тема
+        function initTheme(){
+            let dark = localStorage.getItem('theme')==='dark';
+            if(dark) document.body.classList.add('dark');
+            document.getElementById('themeToggle').onclick = ()=>{
+                document.body.classList.toggle('dark');
+                localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+            };
+        }
+
+        document.addEventListener("DOMContentLoaded", ()=>{
+            loadFromLocal();
+            initTheme();
+            document.getElementById("payoutAmount").addEventListener('input', updatePayoutNet);
+            updateStats();
+        });
     </script>
 </body>
 </html>

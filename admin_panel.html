@@ -4,1463 +4,641 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Панель администратора - УчебаВместе</title>
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Библиотеки для экспорта Excel и PDF -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        /* Стили для админ панели балансов */
-        .admin-balance-section {
-            background: var(--card);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-top: 2rem;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 20px var(--shadow);
+        /* Глобальные переменные (светлая тема по умолчанию) */
+        :root {
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --fg: #1e293b;
+            --muted-fg: #64748b;
+            --primary: #3b82f6;
+            --secondary: #10b981;
+            --shadow: rgba(0,0,0,0.05);
         }
-        
-        .admin-balance-header {
+        body.dark {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --border: #334155;
+            --fg: #f1f5f9;
+            --muted-fg: #94a3b8;
+            --primary: #60a5fa;
+            --secondary: #34d399;
+            --shadow: rgba(0,0,0,0.3);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background 0.2s, color 0.2s;
+        }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        /* Header */
+        header {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--border);
+            padding: 1rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
-        
-        .admin-balance-header h2 {
-            margin: 0;
+        .logo a {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+        nav a {
+            text-decoration: none;
             color: var(--fg);
+            font-weight: 500;
+        }
+        .header-actions {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .admin-balance-header h2 i {
-            color: var(--primary);
-        }
-        
-        .admin-balance-filters {
-            display: flex;
             gap: 1rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
         }
-        
-        .filter-btn {
-            padding: 0.5rem 1rem;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 0.5rem;
-            color: var(--fg);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .filter-btn:hover {
+        .theme-toggle {
             background: var(--border);
-        }
-        
-        .filter-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-        
-        .admin-balance-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-        
-        .admin-balance-table th {
-            background: var(--bg);
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: var(--muted-fg);
-            border-bottom: 2px solid var(--border);
-            position: sticky;
-            top: 0;
-        }
-        
-        .admin-balance-table td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            vertical-align: middle;
-        }
-        
-        .admin-balance-table tr:hover {
-            background: var(--bg);
-        }
-        
-        .user-avatar-small {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border: none;
+            border-radius: 2rem;
+            padding: 0.5rem;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 0.9rem;
+            width: 36px;
+            height: 36px;
         }
-        
-        .user-info-cell {
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--fg);
+        }
+        .user-balance-header {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .user-name {
-            font-weight: 600;
-            color: var(--fg);
-        }
-        
-        .user-email {
-            font-size: 0.85rem;
-            color: var(--muted-fg);
-        }
-        
-        .role-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-        
-        .role-admin {
-            background: #fef3c7;
-            color: #92400e;
-        }
-        
-        .role-tutor {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-        
-        .role-student {
-            background: #dcfce7;
-            color: #15803d;
-        }
-        
-        .balance-cell-admin {
-            font-weight: 600;
-            font-family: 'Courier New', monospace;
-            font-size: 1.1rem;
-        }
-        
-        .balance-positive-admin {
-            color: #10b981;
-        }
-        
-        .balance-negative-admin {
-            color: #ef4444;
-        }
-        
-        .balance-zero-admin {
-            color: var(--muted-fg);
-        }
-        
-        .balance-change {
-            font-size: 0.85rem;
-            display: block;
-            margin-top: 0.25rem;
-        }
-        
-        .change-positive {
-            color: #10b981;
-        }
-        
-        .change-negative {
-            color: #ef4444;
-        }
-        
-        .status-badge-admin {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-        
-        .status-active-admin {
-            background: #dcfce7;
-            color: #15803d;
-        }
-        
-        .status-inactive-admin {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-        
-        .status-pending-admin {
-            background: #fef3c7;
-            color: #92400e;
-        }
-        
-        .action-buttons-admin {
-            display: flex;
             gap: 0.5rem;
         }
-        
-        .btn-balance-admin {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
+        .btn-balance {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             border: none;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            color: white;
             cursor: pointer;
-            width: 36px;
-            height: 36px;
+        }
+        /* Админ панель */
+        .admin-panel {
+            padding: 2rem 0;
+        }
+        h1 {
+            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 0.75rem;
         }
-        
-        .btn-balance-admin:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        .quick-actions, .money-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
         }
-        
-        .btn-history-admin {
-            background: var(--bg);
-            color: var(--fg);
+        .quick-action-btn, .money-action-btn {
+            background: var(--card);
             border: 1px solid var(--border);
-            padding: 0.5rem;
-            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
             cursor: pointer;
-            width: 36px;
-            height: 36px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 0.5rem;
+            color: var(--fg);
+            font-size: 0.9rem;
         }
-        
-        .btn-history-admin:hover {
-            background: var(--border);
-        }
-        
-        .btn-edit-admin {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        .quick-action-btn:hover, .money-action-btn:hover {
+            background: var(--primary);
             color: white;
-            border: none;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .btn-edit-admin:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
-        
-        .admin-balance-summary {
+        .admin-balance-summary, .financial-stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
             margin-bottom: 2rem;
         }
-        
-        .summary-card {
+        .summary-card, .financial-stat {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 0.75rem;
             padding: 1.5rem;
             text-align: center;
         }
-        
-        .summary-card h3 {
-            margin: 0 0 0.5rem 0;
-            font-size: 2rem;
+        .summary-card h3, .financial-value {
+            font-size: 1.8rem;
             color: var(--primary);
+            margin-bottom: 0.5rem;
         }
-        
-        .summary-card p {
-            margin: 0;
-            color: var(--muted-fg);
-            font-size: 0.9rem;
-        }
-        
-        .summary-card .trend {
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-        }
-        
-        .trend-up {
-            color: #10b981;
-        }
-        
-        .trend-down {
-            color: #ef4444;
-        }
-        
-        .search-box-admin {
-            display: flex;
-            align-items: center;
-            background: var(--bg);
+        .admin-balance-section {
+            background: var(--card);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-top: 1rem;
             border: 1px solid var(--border);
-            border-radius: 0.5rem;
-            padding: 0.5rem 1rem;
+        }
+        .admin-balance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 1.5rem;
-            width: 300px;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
-        
-        .search-box-admin input {
-            background: transparent;
-            border: none;
-            color: var(--fg);
-            width: 100%;
-            padding: 0.25rem;
-        }
-        
-        .search-box-admin input:focus {
-            outline: none;
-        }
-        
-        .search-box-admin i {
-            color: var(--muted-fg);
-        }
-        
         .table-actions {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
-        
-        .export-btn {
+        .admin-balance-filters {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
             background: var(--bg);
-            color: var(--fg);
             border: 1px solid var(--border);
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .export-btn:hover {
-            background: var(--border);
-        }
-        
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 2rem;
-        }
-        
-        .page-btn {
             padding: 0.5rem 1rem;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 0.5rem;
-            color: var(--fg);
+            border-radius: 2rem;
             cursor: pointer;
+            color: var(--fg);
         }
-        
-        .page-btn.active {
+        .filter-btn.active {
             background: var(--primary);
             color: white;
             border-color: var(--primary);
         }
-        
-        .page-btn:hover:not(.active) {
-            background: var(--border);
+        .search-box-admin {
+            display: flex;
+            align-items: center;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            padding: 0.5rem 1rem;
+            gap: 0.5rem;
+        }
+        .search-box-admin input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--fg);
+        }
+        .admin-balance-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .admin-balance-table th, .admin-balance-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .admin-balance-table th {
+            background: var(--bg);
+            font-weight: 600;
+        }
+        .user-info-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .user-avatar-small {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        .role-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+        }
+        .role-admin { background: #fef3c7; color: #92400e; }
+        .role-tutor { background: #dbeafe; color: #1e40af; }
+        .role-student { background: #dcfce7; color: #15803d; }
+        body.dark .role-admin { background: #422006; color: #fde047; }
+        body.dark .role-tutor { background: #1e3a8a; color: #bfdbfe; }
+        body.dark .role-student { background: #14532d; color: #86efac; }
+        .balance-positive-admin { color: #10b981; }
+        .balance-negative-admin { color: #ef4444; }
+        .status-badge-admin {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+        }
+        .status-active-admin { background: #dcfce7; color: #15803d; }
+        .status-inactive-admin { background: #fee2e2; color: #b91c1c; }
+        .action-buttons-admin {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .action-buttons-admin button {
+            width: 32px;
+            height: 32px;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            background: var(--bg);
+            color: var(--fg);
+        }
+        .export-btn {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        /* Модальные окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: var(--card);
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 500px;
+            padding: 1.5rem;
+            position: relative;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--muted-fg);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+        .form-control, select, textarea, input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: var(--bg);
+            color: var(--fg);
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: var(--border); color: var(--fg); }
+        .btn-danger { background: #ef4444; color: white; }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        @media (max-width: 768px) {
+            .admin-balance-table th, .admin-balance-table td { padding: 0.5rem; }
+            .user-info-cell { flex-direction: column; align-items: start; }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header>
         <div class="container">
             <div class="header-content">
-                <div class="logo">
-                    <a href="index.html" class="logo-link">УчебаВместе</a>
-                </div>
-                <nav>
-                    <a href="index.html#subjects">Предметы</a>
-                    <a href="teacher.html">Репетиторы</a>
-                </nav>
+                <div class="logo"><a href="index.html">УчебаВместе</a></div>
+                <nav><a href="index.html">Предметы</a><a href="teacher.html">Репетиторы</a></nav>
                 <div class="header-actions">
-                    <button class="theme-toggle" id="themeToggle" aria-label="Переключить тему">
-                        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="5"></circle>
-                            <line x1="12" y1="1" x2="12" y2="3"></line>
-                            <line x1="12" y1="21" x2="12" y2="23"></line>
-                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                            <line x1="1" y1="12" x2="3" y2="12"></line>
-                            <line x1="21" y1="12" x2="23" y2="12"></line>
-                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                        </svg>
-                        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                        </svg>
-                    </button>
-                    <div id="userAuthSection">
-                        <div class="user-balance-header">
-                            <span class="balance-amount">Система</span>
-                            <button class="btn btn-balance btn-sm" onclick="showSystemBalance()">
-                                <i class="fas fa-money-bill-wave"></i>
-                            </button>
-                        </div>
-                    </div>
+                   
+                    <div class="user-balance-header"><span class="balance-amount">Админ</span><button class="btn-balance" onclick="showSystemBalance()"><i class="fas fa-money-bill-wave"></i> Система</button></div>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Админ панель с балансами -->
     <section class="admin-panel">
         <div class="container">
             <h1><i class="fas fa-money-bill-wave"></i> Управление балансами</h1>
-            
-            <!-- Быстрые действия -->
             <div class="quick-actions">
-                <button class="quick-action-btn" onclick="showMoneyStats()">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Финансовая статистика</span>
-                </button>
-                <button class="quick-action-btn" onclick="showAllOperations()">
-                    <i class="fas fa-exchange-alt"></i>
-                    <span>Все операции</span>
-                </button>
-                <button class="quick-action-btn" onclick="exportAllBalances()">
-                    <i class="fas fa-download"></i>
-                    <span>Экспорт балансов</span>
-                </button>
-                <button class="quick-action-btn" onclick="showBalanceCorrections()">
-                    <i class="fas fa-adjust"></i>
-                    <span>Корректировки</span>
-                </button>
+                <button class="quick-action-btn" onclick="showMoneyStatsAdmin()"><i class="fas fa-chart-line"></i> Статистика</button>
+                <button class="quick-action-btn" onclick="exportAllBalancesCSV()"><i class="fas fa-download"></i> Экспорт всех (CSV)</button>
+                <button class="quick-action-btn" onclick="exportBalancesExcel()"><i class="fas fa-file-excel"></i> Excel (текущий список)</button>
             </div>
-            
-            <!-- Сводка по балансам -->
-            <div class="admin-balance-summary">
-                <div class="summary-card">
-                    <h3 id="totalSystemBalance">1,245,300 ₽</h3>
-                    <p>Общий баланс системы</p>
-                    <div class="trend trend-up">+12.5% за месяц</div>
-                </div>
-                <div class="summary-card">
-                    <h3 id="totalStudentsBalance">356,800 ₽</h3>
-                    <p>Балансы учеников</p>
-                    <div class="trend trend-up">+8.3% за месяц</div>
-                </div>
-                <div class="summary-card">
-                    <h3 id="totalTutorsBalance">888,500 ₽</h3>
-                    <p>Балансы репетиторов</p>
-                    <div class="trend trend-up">+15.2% за месяц</div>
-                </div>
-                <div class="summary-card">
-                    <h3 id="pendingPayouts">125,000 ₽</h3>
-                    <p>Ожидают выплаты</p>
-                    <div class="trend trend-down">-5.1% за неделю</div>
-                </div>
+
+            <div class="admin-balance-summary" id="summaryContainer">
+                <div class="summary-card"><h3 id="totalSystemBalance">0 ₽</h3><p>Общий баланс</p></div>
+                <div class="summary-card"><h3 id="totalStudentsBalance">0 ₽</h3><p>Ученики</p></div>
+                <div class="summary-card"><h3 id="totalTutorsBalance">0 ₽</h3><p>Репетиторы</p></div>
+                <div class="summary-card"><h3 id="pendingPayouts">0 ₽</h3><p>Ожидает выплат</p></div>
             </div>
-            
-            <!-- Таблица балансов -->
+
             <div class="admin-balance-section">
                 <div class="admin-balance-header">
                     <h2><i class="fas fa-users"></i> Балансы пользователей</h2>
-                    <div style="display: flex; gap: 1rem;">
-                        <button class="btn btn-primary" onclick="showAddMoneyModalAdmin()">
-                            <i class="fas fa-plus"></i> Пополнить баланс
-                        </button>
-                        <button class="btn btn-outline" onclick="showWithdrawModalAdmin()">
-                            <i class="fas fa-minus"></i> Списать средства
-                        </button>
-                    </div>
+                    <div><button class="btn btn-primary" onclick="showAddMoneyModal()"><i class="fas fa-plus"></i> Пополнить</button>
+                    <button class="btn btn-secondary" onclick="showWithdrawModal()"><i class="fas fa-minus"></i> Списать</button></div>
                 </div>
-                
-                <!-- Фильтры и поиск -->
                 <div class="table-actions">
-                    <div class="admin-balance-filters" id="balanceFilters">
-                        <button class="filter-btn active" onclick="filterBalances('all')">Все</button>
-                        <button class="filter-btn" onclick="filterBalances('student')">Ученики</button>
-                        <button class="filter-btn" onclick="filterBalances('tutor')">Репетиторы</button>
-                        <button class="filter-btn" onclick="filterBalances('admin')">Администраторы</button>
-                        <button class="filter-btn" onclick="filterBalances('positive')">С положительным балансом</button>
-                        <button class="filter-btn" onclick="filterBalances('negative')">С отрицательным балансом</button>
+                    <div class="admin-balance-filters" id="filterGroup">
+                        <button class="filter-btn active" data-filter="all" onclick="filterTable('all', this)">Все</button>
+                        <button class="filter-btn" data-filter="student" onclick="filterTable('student', this)">Ученики</button>
+                        <button class="filter-btn" data-filter="tutor" onclick="filterTable('tutor', this)">Репетиторы</button>
+                        <button class="filter-btn" data-filter="admin" onclick="filterTable('admin', this)">Админы</button>
+                        <button class="filter-btn" data-filter="positive" onclick="filterTable('positive', this)">Баланс > 0</button>
                     </div>
-                    
-                    <div class="search-box-admin">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="balanceSearch" placeholder="Поиск пользователей..." oninput="searchBalances()">
-                    </div>
+                    <div class="search-box-admin"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Поиск..." oninput="searchBalances()"></div>
                 </div>
-                
-                <!-- Таблица -->
                 <div style="overflow-x: auto;">
-                    <table class="admin-balance-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Пользователь</th>
-                                <th>Роль</th>
-                                <th>Баланс</th>
-                                <th>Изменение</th>
-                                <th>Статус</th>
-                                <th>Последняя активность</th>
-                                <th>Действия</th>
-                            </tr>
-                        </thead>
-                        <tbody id="balanceTableBody">
-                            <tr>
-                                <td>1</td>
-                                <td>
-                                    <div class="user-info-cell">
-                                        <div class="user-avatar-small">АА</div>
-                                        <div>
-                                            <div class="user-name">Админ Админов</div>
-                                            <div class="user-email">admin@ucheba-vmeste.ru</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="role-badge role-admin">Администратор</span></td>
-                                <td class="balance-cell-admin balance-positive-admin">0 ₽</td>
-                                <td>
-                                    <span class="balance-change change-positive">+0 ₽</span>
-                                    <small>За месяц</small>
-                                </td>
-                                <td><span class="status-badge-admin status-active-admin">Активен</span></td>
-                                <td>Сегодня, 10:30</td>
-                                <td>
-                                    <div class="action-buttons-admin">
-                                        <button class="btn-balance-admin" onclick="manageUserBalanceAdmin(1, 'admin')">
-                                            <i class="fas fa-money-bill-wave"></i>
-                                        </button>
-                                        <button class="btn-history-admin" onclick="showUserOperationsAdmin(1, 'admin')">
-                                            <i class="fas fa-history"></i>
-                                        </button>
-                                        <button class="btn-edit-admin" onclick="editUserAdmin(1)">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>
-                                    <div class="user-info-cell">
-                                        <div class="user-avatar-small">АП</div>
-                                        <div>
-                                            <div class="user-name">Анна Петрова</div>
-                                            <div class="user-email">anna@ucheba-vmeste.ru</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="role-badge role-tutor">Репетитор</span></td>
-                                <td class="balance-cell-admin balance-positive-admin">45,000 ₽</td>
-                                <td>
-                                    <span class="balance-change change-positive">+15,000 ₽</span>
-                                    <small>За месяц</small>
-                                </td>
-                                <td><span class="status-badge-admin status-active-admin">Активен</span></td>
-                                <td>Вчера, 18:45</td>
-                                <td>
-                                    <div class="action-buttons-admin">
-                                        <button class="btn-balance-admin" onclick="manageUserBalanceAdmin(2, 'tutor')">
-                                            <i class="fas fa-money-bill-wave"></i>
-                                        </button>
-                                        <button class="btn-history-admin" onclick="showUserOperationsAdmin(2, 'tutor')">
-                                            <i class="fas fa-history"></i>
-                                        </button>
-                                        <button class="btn-edit-admin" onclick="editUserAdmin(2)">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>
-                                    <div class="user-info-cell">
-                                        <div class="user-avatar-small">ИИ</div>
-                                        <div>
-                                            <div class="user-name">Иван Иванов</div>
-                                            <div class="user-email">student@example.com</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="role-badge role-student">Ученик</span></td>
-                                <td class="balance-cell-admin balance-positive-admin">5,000 ₽</td>
-                                <td>
-                                    <span class="balance-change change-positive">+5,000 ₽</span>
-                                    <small>За неделю</small>
-                                </td>
-                                <td><span class="status-badge-admin status-active-admin">Активен</span></td>
-                                <td>Сегодня, 09:15</td>
-                                <td>
-                                    <div class="action-buttons-admin">
-                                        <button class="btn-balance-admin" onclick="manageUserBalanceAdmin(3, 'student')">
-                                            <i class="fas fa-money-bill-wave"></i>
-                                        </button>
-                                        <button class="btn-history-admin" onclick="showUserOperationsAdmin(3, 'student')">
-                                            <i class="fas fa-history"></i>
-                                        </button>
-                                        <button class="btn-edit-admin" onclick="editUserAdmin(3)">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>
-                                    <div class="user-info-cell">
-                                        <div class="user-avatar-small">АК</div>
-                                        <div>
-                                            <div class="user-name">Алексей Козлов</div>
-                                            <div class="user-email">alexey@ucheba-vmeste.ru</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="role-badge role-tutor">Репетитор</span></td>
-                                <td class="balance-cell-admin balance-positive-admin">38,500 ₽</td>
-                                <td>
-                                    <span class="balance-change change-positive">+12,500 ₽</span>
-                                    <small>За месяц</small>
-                                </td>
-                                <td><span class="status-badge-admin status-active-admin">Активен</span></td>
-                                <td>Вчера, 14:20</td>
-                                <td>
-                                    <div class="action-buttons-admin">
-                                        <button class="btn-balance-admin" onclick="manageUserBalanceAdmin(4, 'tutor')">
-                                            <i class="fas fa-money-bill-wave"></i>
-                                        </button>
-                                        <button class="btn-history-admin" onclick="showUserOperationsAdmin(4, 'tutor')">
-                                            <i class="fas fa-history"></i>
-                                        </button>
-                                        <button class="btn-edit-admin" onclick="editUserAdmin(4)">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>
-                                    <div class="user-info-cell">
-                                        <div class="user-avatar-small">ИС</div>
-                                        <div>
-                                            <div class="user-name">Иван Сидоров</div>
-                                            <div class="user-email">ivan@ucheba-vmeste.ru</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="role-badge role-tutor">Репетитор</span></td>
-                                <td class="balance-cell-admin balance-positive-admin">52,300 ₽</td>
-                                <td>
-                                    <span class="balance-change change-positive">+22,300 ₽</span>
-                                    <small>За месяц</small>
-                                </td>
-                                <td><span class="status-badge-admin status-active-admin">Активен</span></td>
-                                <td>Сегодня, 11:45</td>
-                                <td>
-                                    <div class="action-buttons-admin">
-                                        <button class="btn-balance-admin" onclick="manageUserBalanceAdmin(5, 'tutor')">
-                                            <i class="fas fa-money-bill-wave"></i>
-                                        </button>
-                                        <button class="btn-history-admin" onclick="showUserOperationsAdmin(5, 'tutor')">
-                                            <i class="fas fa-history"></i>
-                                        </button>
-                                        <button class="btn-edit-admin" onclick="editUserAdmin(5)">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>6</td>
-                                <td>
-                                    <div class="user-info-cell">
-                                        <div class="user-avatar-small">ПС</div>
-                                        <div>
-                                            <div class="user-name">Петр Сидоров</div>
-                                            <div class="user-email">peter@example.com</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="role-badge role-student">Ученик</span></td>
-                                <td class="balance-cell-admin balance-zero-admin">0 ₽</td>
-                                <td>
-                                    <span class="balance-change change-negative">-1,500 ₽</span>
-                                    <small>За неделю</small>
-                                </td>
-                                <td><span class="status-badge-admin status-inactive-admin">Неактивен</span></td>
-                                <td>3 дня назад</td>
-                                <td>
-                                    <div class="action-buttons-admin">
-                                        <button class="btn-balance-admin" onclick="manageUserBalanceAdmin(6, 'student')">
-                                            <i class="fas fa-money-bill-wave"></i>
-                                        </button>
-                                        <button class="btn-history-admin" onclick="showUserOperationsAdmin(6, 'student')">
-                                            <i class="fas fa-history"></i>
-                                        </button>
-                                        <button class="btn-edit-admin" onclick="editUserAdmin(6)">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>7</td>
-                                <td>
-                                    <div class="user-info-cell">
-                                        <div class="user-avatar-small">МВ</div>
-                                        <div>
-                                            <div class="user-name">Мария Волкова</div>
-                                            <div class="user-email">maria@example.com</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="role-badge role-student">Ученик</span></td>
-                                <td class="balance-cell-admin balance-positive-admin">12,500 ₽</td>
-                                <td>
-                                    <span class="balance-change change-positive">+2,500 ₽</span>
-                                    <small>За неделю</small>
-                                </td>
-                                <td><span class="status-badge-admin status-active-admin">Активен</span></td>
-                                <td>Вчера, 16:30</td>
-                                <td>
-                                    <div class="action-buttons-admin">
-                                        <button class="btn-balance-admin" onclick="manageUserBalanceAdmin(7, 'student')">
-                                            <i class="fas fa-money-bill-wave"></i>
-                                        </button>
-                                        <button class="btn-history-admin" onclick="showUserOperationsAdmin(7, 'student')">
-                                            <i class="fas fa-history"></i>
-                                        </button>
-                                        <button class="btn-edit-admin" onclick="editUserAdmin(7)">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>8</td>
-                                <td>
-                                    <div class="user-info-cell">
-                                        <div class="user-avatar-small">ДП</div>
-                                        <div>
-                                            <div class="user-name">Дмитрий Попов</div>
-                                            <div class="user-email">dmitry@ucheba-vmeste.ru</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="role-badge role-tutor">Репетитор</span></td>
-                                <td class="balance-cell-admin balance-positive-admin">67,800 ₽</td>
-                                <td>
-                                    <span class="balance-change change-positive">+27,800 ₽</span>
-                                    <small>За месяц</small>
-                                </td>
-                                <td><span class="status-badge-admin status-active-admin">Активен</span></td>
-                                <td>Сегодня, 08:15</td>
-                                <td>
-                                    <div class="action-buttons-admin">
-                                        <button class="btn-balance-admin" onclick="manageUserBalanceAdmin(8, 'tutor')">
-                                            <i class="fas fa-money-bill-wave"></i>
-                                        </button>
-                                        <button class="btn-history-admin" onclick="showUserOperationsAdmin(8, 'tutor')">
-                                            <i class="fas fa-history"></i>
-                                        </button>
-                                        <button class="btn-edit-admin" onclick="editUserAdmin(8)">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
+                    <table class="admin-balance-table" id="balanceTable">
+                        <thead><tr><th>ID</th><th>Пользователь</th><th>Роль</th><th>Баланс</th><th>Статус</th><th>Активность</th><th>Действия</th></tr></thead>
+                        <tbody id="tableBody"></tbody>
                     </table>
                 </div>
-                
-                <!-- Пагинация -->
-                <div class="pagination">
-                    <button class="page-btn active">1</button>
-                    <button class="page-btn">2</button>
-                    <button class="page-btn">3</button>
-                    <button class="page-btn">4</button>
-                    <button class="page-btn">5</button>
-                </div>
-                
-                <!-- Кнопки экспорта -->
-                <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
-                    <button class="export-btn" onclick="exportBalancesCSV()">
-                        <i class="fas fa-file-csv"></i> Экспорт в CSV
-                    </button>
-                    <button class="export-btn" onclick="exportBalancesPDF()">
-                        <i class="fas fa-file-pdf"></i> Экспорт в PDF
-                    </button>
-                    <button class="export-btn" onclick="exportBalancesExcel()">
-                        <i class="fas fa-file-excel"></i> Экспорт в Excel
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Быстрые финансовые операции -->
-            <div class="quick-money">
-                <h3><i class="fas fa-money-bill-wave"></i> Быстрые финансовые операции</h3>
-                <div class="money-actions">
-                    <button class="money-action-btn" onclick="quickAddMoneyAdmin('student')">
-                        <i class="fas fa-user-plus"></i>
-                        <span>Пополнить ученику</span>
-                    </button>
-                    <button class="money-action-btn" onclick="quickAddMoneyAdmin('tutor')">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                        <span>Выплата репетитору</span>
-                    </button>
-                    <button class="money-action-btn" onclick="quickWithdrawMoneyAdmin()">
-                        <i class="fas fa-minus-circle"></i>
-                        <span>Списать средства</span>
-                    </button>
-                    <button class="money-action-btn" onclick="showMoneyStatsAdmin()">
-                        <i class="fas fa-chart-pie"></i>
-                        <span>Финансовая аналитика</span>
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Общая финансовая статистика -->
-            <div class="financial-stats">
-                <div class="financial-stat">
-                    <div class="financial-value" id="totalSystemBalanceStat">1,245,300 ₽</div>
-                    <div class="financial-label">Общий баланс системы</div>
-                </div>
-                <div class="financial-stat">
-                    <div class="financial-value" id="monthlyRevenueStat">356,800 ₽</div>
-                    <div class="financial-label">Выручка за месяц</div>
-                </div>
-                <div class="financial-stat">
-                    <div class="financial-value" id="avgLessonPriceStat">2,500 ₽</div>
-                    <div class="financial-label">Средний чек урока</div>
-                </div>
-                <div class="financial-stat">
-                    <div class="financial-value" id="pendingPaymentsStat">125</div>
-                    <div class="financial-label">Ожидает выплаты</div>
+                <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+                    <button class="export-btn" onclick="exportCSV()"><i class="fas fa-file-csv"></i> CSV (тек. список)</button>
+                    <button class="export-btn" onclick="exportPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+                    <button class="export-btn" onclick="exportExcel()"><i class="fas fa-file-excel"></i> Excel</button>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Модальное окно управления балансом -->
-    <div class="modal" id="balanceModalAdmin">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-money-bill-wave"></i> Управление балансом</h2>
-                <button class="modal-close" onclick="closeModal('balanceModalAdmin')">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="balance-info">
-                    <p><strong>Пользователь:</strong> <span id="balanceUserNameAdmin">-</span></p>
-                    <p><strong>Роль:</strong> <span id="balanceUserRoleAdmin">-</span></p>
-                    <p><strong>Текущий баланс:</strong> <span id="currentUserBalanceAdmin" class="balance-positive-admin">0 ₽</span></p>
-                </div>
-                
-                <form id="balanceFormAdmin">
-                    <input type="hidden" id="balanceUserIdAdmin">
-                    <input type="hidden" id="balanceUserTypeAdmin">
-                    
-                    <div class="form-group">
-                        <label for="operationTypeAdmin">Тип операции</label>
-                        <select id="operationTypeAdmin" class="form-control" onchange="updateOperationType()">
-                            <option value="add">Пополнение</option>
-                            <option value="subtract">Списание</option>
-                            <option value="bonus">Бонус</option>
-                            <option value="salary">Зарплата</option>
-                            <option value="correction">Корректировка</option>
-                            <option value="refund">Возврат</option>
-                            <option value="commission">Комиссия</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="amountAdmin">Сумма (₽)</label>
-                        <input type="number" id="amountAdmin" class="form-control" min="1" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="commentAdmin">Комментарий</label>
-                        <textarea id="commentAdmin" class="form-control" rows="3" placeholder="Причина операции..."></textarea>
-                    </div>
-                    
-                    <div class="form-group" id="notificationSection" style="display: none;">
-                        <label>
-                            <input type="checkbox" id="notifyUserAdmin" checked>
-                            Уведомить пользователя по email
-                        </label>
-                    </div>
-                    
-                    <div class="form-group" id="payoutMethodSection" style="display: none;">
-                        <label for="payoutMethodAdmin">Способ выплаты</label>
-                        <select id="payoutMethodAdmin" class="form-control">
-                            <option value="bank_card">Банковская карта</option>
-                            <option value="sberbank">Сбербанк Онлайн</option>
-                            <option value="yoomoney">ЮMoney</option>
-                            <option value="qiwi">QIWI Кошелек</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('balanceModalAdmin')">Отмена</button>
-                <button class="btn btn-primary" onclick="processBalanceOperationAdmin()">Выполнить операцию</button>
-            </div>
-        </div>
-    </div>
+    <!-- Модалки -->
+    <div id="balanceModal" class="modal"><div class="modal-content"><div class="modal-header"><h3>Управление балансом</h3><span class="modal-close" onclick="closeModal('balanceModal')">&times;</span></div><div class="modal-body"><p><strong>Пользователь:</strong> <span id="modalUserName"></span></p><p><strong>Текущий баланс:</strong> <span id="modalUserBalance"></span></p><div class="form-group"><label>Сумма (₽)</label><input type="number" id="amountInput" class="form-control"></div><div class="form-group"><label>Тип</label><select id="opType" class="form-control"><option value="add">Пополнение</option><option value="subtract">Списание</option></select></div><div class="form-group"><label>Комментарий</label><textarea id="commentInput" class="form-control"></textarea></div><input type="hidden" id="currentUserId"></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('balanceModal')">Отмена</button><button class="btn btn-primary" onclick="processBalanceChange()">Применить</button></div></div></div>
 
-    <!-- Модальное окно истории операций -->
-    <div class="modal" id="operationsModalAdmin">
-        <div class="modal-content" style="max-width: 900px;">
-            <div class="modal-header">
-                <h2>История операций</h2>
-                <button class="modal-close" onclick="closeModal('operationsModalAdmin')">×</button>
-            </div>
-            <div class="modal-body">
-                <div id="operationsModalContentAdmin">
-                    <div style="text-align: center; padding: 2rem;">
-                        <i class="fas fa-history" style="font-size: 3rem; color: var(--muted-fg); margin-bottom: 1rem;"></i>
-                        <h3>История операций</h3>
-                        <p>Загрузка истории операций...</p>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('operationsModalAdmin')">Закрыть</button>
-            </div>
-        </div>
-    </div>
+    <div id="addMoneyModal" class="modal"><div class="modal-content"><div class="modal-header"><h3>Пополнение баланса</h3><span class="modal-close" onclick="closeModal('addMoneyModal')">&times;</span></div><div class="modal-body"><div class="form-group"><label>Пользователь</label><select id="userSelectAdd" class="form-control"></select></div><div class="form-group"><label>Сумма (₽)</label><input type="number" id="addAmount" class="form-control"></div><div class="form-group"><label>Комментарий</label><textarea id="addComment" class="form-control"></textarea></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('addMoneyModal')">Отмена</button><button class="btn btn-primary" onclick="processAddMoney()">Пополнить</button></div></div></div>
 
-    <!-- Модальное окно пополнения баланса -->
-    <div class="modal" id="addMoneyModalAdmin">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-plus-circle"></i> Пополнение баланса</h2>
-                <button class="modal-close" onclick="closeModal('addMoneyModalAdmin')">×</button>
-            </div>
-            <div class="modal-body">
-                <form id="addMoneyFormAdmin">
-                    <div class="form-group">
-                        <label for="selectUserAdmin">Выберите пользователя</label>
-                        <select id="selectUserAdmin" class="form-control" onchange="selectUserForAddMoney()">
-                            <option value="">Выберите пользователя...</option>
-                            <option value="3">Иван Иванов (Ученик) - 5,000 ₽</option>
-                            <option value="7">Мария Волкова (Ученик) - 12,500 ₽</option>
-                            <option value="6">Петр Сидоров (Ученик) - 0 ₽</option>
-                            <option value="2">Анна Петрова (Репетитор) - 45,000 ₽</option>
-                            <option value="4">Алексей Козлов (Репетитор) - 38,500 ₽</option>
-                            <option value="5">Иван Сидоров (Репетитор) - 52,300 ₽</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="addAmountAdmin">Сумма пополнения (₽)</label>
-                        <input type="number" id="addAmountAdmin" class="form-control" min="1" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="addCommentAdmin">Комментарий</label>
-                        <textarea id="addCommentAdmin" class="form-control" rows="3" placeholder="Причина пополнения..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="paymentMethodAdmin">Способ оплаты</label>
-                        <select id="paymentMethodAdmin" class="form-control">
-                            <option value="manual">Ручное пополнение</option>
-                            <option value="card">Банковская карта</option>
-                            <option value="sberbank">Сбербанк Онлайн</option>
-                            <option value="yoomoney">ЮMoney</option>
-                            <option value="cash">Наличные</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('addMoneyModalAdmin')">Отмена</button>
-                <button class="btn btn-primary" onclick="processAddMoneyAdmin()">Пополнить баланс</button>
-            </div>
-        </div>
-    </div>
+    <div id="withdrawModal" class="modal"><div class="modal-content"><div class="modal-header"><h3>Списание средств</h3><span class="modal-close" onclick="closeModal('withdrawModal')">&times;</span></div><div class="modal-body"><div class="form-group"><label>Пользователь</label><select id="userSelectWithdraw" class="form-control"></select></div><div class="form-group"><label>Сумма (₽)</label><input type="number" id="withdrawAmount" class="form-control"></div><div class="form-group"><label>Причина</label><textarea id="withdrawComment" class="form-control"></textarea></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('withdrawModal')">Отмена</button><button class="btn btn-danger" onclick="processWithdraw()">Списать</button></div></div></div>
 
-    <!-- Модальное окно списания средств -->
-    <div class="modal" id="withdrawModalAdmin">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-minus-circle"></i> Списание средств</h2>
-                <button class="modal-close" onclick="closeModal('withdrawModalAdmin')">×</button>
-            </div>
-            <div class="modal-body">
-                <form id="withdrawFormAdmin">
-                    <div class="form-group">
-                        <label for="selectUserWithdrawAdmin">Выберите пользователя</label>
-                        <select id="selectUserWithdrawAdmin" class="form-control" onchange="selectUserForWithdraw()">
-                            <option value="">Выберите пользователя...</option>
-                            <option value="3">Иван Иванов (Ученик) - 5,000 ₽</option>
-                            <option value="7">Мария Волкова (Ученик) - 12,500 ₽</option>
-                            <option value="2">Анна Петрова (Репетитор) - 45,000 ₽</option>
-                            <option value="4">Алексей Козлов (Репетитор) - 38,500 ₽</option>
-                            <option value="5">Иван Сидоров (Репетитор) - 52,300 ₽</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="withdrawAmountAdmin">Сумма списания (₽)</label>
-                        <input type="number" id="withdrawAmountAdmin" class="form-control" min="1" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="withdrawReasonAdmin">Причина списания</label>
-                        <select id="withdrawReasonAdmin" class="form-control">
-                            <option value="lesson_payment">Оплата урока</option>
-                            <option value="commission">Комиссия сервиса</option>
-                            <option value="fine">Штраф</option>
-                            <option value="correction">Корректировка</option>
-                            <option value="other">Другое</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="withdrawCommentAdmin">Комментарий</label>
-                        <textarea id="withdrawCommentAdmin" class="form-control" rows="3" placeholder="Дополнительная информация..."></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('withdrawModalAdmin')">Отмена</button>
-                <button class="btn btn-danger" onclick="processWithdrawAdmin()">Списать средства</button>
-            </div>
-        </div>
-    </div>
+    <div id="systemBalanceModal" class="modal"><div class="modal-content"><div class="modal-header"><h3>Системный баланс</h3><span class="modal-close" onclick="closeModal('systemBalanceModal')">&times;</span></div><div class="modal-body"><div style="text-align:center; font-size:2rem; font-weight:bold;" id="sysBalanceValue"></div><p>Общая сумма всех балансов</p></div></div></div>
 
-    <!-- Модальное окно системного баланса -->
-    <div class="modal" id="systemBalanceModal">
-        <div class="modal-content" style="max-width: 800px;">
-            <div class="modal-header">
-                <h2><i class="fas fa-cogs"></i> Системный баланс</h2>
-                <button class="modal-close" onclick="closeModal('systemBalanceModal')">×</button>
-            </div>
-            <div class="modal-body">
-                <div style="text-align: center; margin-bottom: 2rem;">
-                    <div style="font-size: 3rem; font-weight: bold; color: #10b981;">1,245,300 ₽</div>
-                    <p>Общий баланс системы</p>
-                </div>
-                
-                <div class="admin-balance-summary" style="margin-bottom: 2rem;">
-                    <div class="summary-card">
-                        <h3>356,800 ₽</h3>
-                        <p>Балансы учеников</p>
-                    </div>
-                    <div class="summary-card">
-                        <h3>888,500 ₽</h3>
-                        <p>Балансы репетиторов</p>
-                    </div>
-                </div>
-                
-                <h3>Распределение средств</h3>
-                <div style="height: 20px; background: #e5e7eb; border-radius: 10px; margin: 1rem 0; overflow: hidden;">
-                    <div style="width: 28.6%; height: 100%; background: #3b82f6; float: left;"></div>
-                    <div style="width: 71.4%; height: 100%; background: #10b981; float: left;"></div>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-                    <span>Ученики: 356,800 ₽ (28.6%)</span>
-                    <span>Репетиторы: 888,500 ₽ (71.4%)</span>
-                </div>
-                
-                <div style="margin-top: 2rem; padding: 1rem; background: #f8fafc; border-radius: 0.5rem;">
-                    <h4>Системная информация</h4>
-                    <p><strong>Комиссия сервиса:</strong> 15% от стоимости урока</p>
-                    <p><strong>Минимальная сумма вывода:</strong> 3,000 ₽</p>
-                    <p><strong>Среднее время вывода:</strong> 1-3 рабочих дня</p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('systemBalanceModal')">Закрыть</button>
-                <button class="btn btn-primary" onclick="showSystemOperations()">Операции системы</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="js/main.js"></script>
-    <script src="js/admin_panel.js"></script>
-    
     <script>
-        // Данные пользователей для демонстрации
-        const usersData = [
-            {id: 1, name: 'Админ Админов', email: 'admin@ucheba-vmeste.ru', role: 'admin', balance: 0, status: 'active', lastActive: 'Сегодня, 10:30'},
-            {id: 2, name: 'Анна Петрова', email: 'anna@ucheba-vmeste.ru', role: 'tutor', balance: 45000, status: 'active', lastActive: 'Вчера, 18:45'},
-            {id: 3, name: 'Иван Иванов', email: 'student@example.com', role: 'student', balance: 5000, status: 'active', lastActive: 'Сегодня, 09:15'},
-            {id: 4, name: 'Алексей Козлов', email: 'alexey@ucheba-vmeste.ru', role: 'tutor', balance: 38500, status: 'active', lastActive: 'Вчера, 14:20'},
-            {id: 5, name: 'Иван Сидоров', email: 'ivan@ucheba-vmeste.ru', role: 'tutor', balance: 52300, status: 'active', lastActive: 'Сегодня, 11:45'},
-            {id: 6, name: 'Петр Сидоров', email: 'peter@example.com', role: 'student', balance: 0, status: 'inactive', lastActive: '3 дня назад'},
-            {id: 7, name: 'Мария Волкова', email: 'maria@example.com', role: 'student', balance: 12500, status: 'active', lastActive: 'Вчера, 16:30'},
-            {id: 8, name: 'Дмитрий Попов', email: 'dmitry@ucheba-vmeste.ru', role: 'tutor', balance: 67800, status: 'active', lastActive: 'Сегодня, 08:15'}
+        // ======================= ДАННЫЕ =======================
+        let users = [
+            {id:1, name:"Админ Админов", email:"admin@ucheba-vmeste.ru", role:"admin", balance:0, status:"active", lastActive:"Сегодня, 10:30"},
+            {id:2, name:"Анна Петрова", email:"anna@ucheba-vmeste.ru", role:"tutor", balance:45000, status:"active", lastActive:"Вчера, 18:45"},
+            {id:3, name:"Иван Иванов", email:"student@example.com", role:"student", balance:5000, status:"active", lastActive:"Сегодня, 09:15"},
+            {id:4, name:"Алексей Козлов", email:"alexey@ucheba-vmeste.ru", role:"tutor", balance:38500, status:"active", lastActive:"Вчера, 14:20"},
+            {id:5, name:"Иван Сидоров", email:"ivan@ucheba-vmeste.ru", role:"tutor", balance:52300, status:"active", lastActive:"Сегодня, 11:45"},
+            {id:6, name:"Петр Сидоров", email:"peter@example.com", role:"student", balance:0, status:"inactive", lastActive:"3 дня назад"},
+            {id:7, name:"Мария Волкова", email:"maria@example.com", role:"student", balance:12500, status:"active", lastActive:"Вчера, 16:30"},
+            {id:8, name:"Дмитрий Попов", email:"dmitry@ucheba-vmeste.ru", role:"tutor", balance:67800, status:"active", lastActive:"Сегодня, 08:15"}
         ];
-        
-        // Текущий фильтр
-        let currentFilter = 'all';
-        let currentSearch = '';
-        
-        // Функции управления балансом
-        function manageUserBalanceAdmin(userId, userType) {
-            const user = usersData.find(u => u.id === userId);
-            if (!user) return;
-            
-            document.getElementById('balanceUserNameAdmin').textContent = user.name;
-            document.getElementById('balanceUserRoleAdmin').textContent = 
-                user.role === 'admin' ? 'Администратор' : 
-                user.role === 'tutor' ? 'Репетитор' : 'Ученик';
-            document.getElementById('currentUserBalanceAdmin').textContent = 
-                user.balance.toLocaleString('ru-RU') + ' ₽';
-            document.getElementById('balanceUserIdAdmin').value = userId;
-            document.getElementById('balanceUserTypeAdmin').value = userType;
-            
-            // Сбросить форму
-            document.getElementById('amountAdmin').value = '';
-            document.getElementById('commentAdmin').value = '';
-            document.getElementById('operationTypeAdmin').value = 'add';
-            
-            document.getElementById('balanceModalAdmin').style.display = 'block';
-        }
-        
-        function showUserOperationsAdmin(userId, userType) {
-            const user = usersData.find(u => u.id === userId);
-            const content = document.getElementById('operationsModalContentAdmin');
-            
-            let html = `<h3>История операций: ${user.name}</h3>`;
-            
-            // Демо-операции
-            const operations = [
-                {date: '15.12.2024 10:30', type: 'add', amount: 5000, comment: 'Пополнение баланса', balance: 5000},
-                {date: '10.12.2024 14:15', type: 'subtract', amount: 1500, comment: 'Оплата урока математики', balance: 3500},
-                {date: '05.12.2024 09:45', type: 'bonus', amount: 500, comment: 'Приветственный бонус', balance: 4000},
-                {date: '01.12.2024 16:20', type: 'add', amount: 1000, comment: 'Пополнение через карту', balance: 3000}
-            ];
-            
-            html += '<div style="overflow-x: auto; margin-top: 1rem;">';
-            html += '<table class="admin-balance-table" style="font-size: 0.9rem;">';
-            html += '<thead><tr><th>Дата</th><th>Тип</th><th>Сумма</th><th>Комментарий</th><th>Баланс после</th></tr></thead>';
-            html += '<tbody>';
-            
-            operations.forEach(op => {
-                const typeText = op.type === 'add' ? 'Пополнение' : 
-                                op.type === 'subtract' ? 'Списание' : 'Бонус';
-                const typeClass = op.type === 'add' ? 'operation-positive' : 
-                                 op.type === 'subtract' ? 'operation-negative' : 'operation-bonus';
-                
-                html += `<tr>
-                    <td>${op.date}</td>
-                    <td><span class="${typeClass}">${typeText}</span></td>
-                    <td class="${op.type === 'add' ? 'balance-positive-admin' : 'balance-negative-admin'}">
-                        ${op.type === 'add' ? '+' : '-'} ${op.amount.toLocaleString('ru-RU')} ₽
-                    </td>
-                    <td>${op.comment}</td>
-                    <td>${op.balance.toLocaleString('ru-RU')} ₽</td>
-                </tr>`;
-            });
-            
-            html += '</tbody></table></div>';
-            content.innerHTML = html;
-            document.getElementById('operationsModalAdmin').style.display = 'block';
-        }
-        
-        function editUserAdmin(userId) {
-            alert(`Редактирование пользователя с ID: ${userId}`);
-        }
-        
-        function showAddMoneyModalAdmin() {
-            document.getElementById('addMoneyModalAdmin').style.display = 'block';
-        }
-        
-        function showWithdrawModalAdmin() {
-            document.getElementById('withdrawModalAdmin').style.display = 'block';
-        }
-        
-        function showSystemBalance() {
-            document.getElementById('systemBalanceModal').style.display = 'block';
-        }
-        
-        function showMoneyStatsAdmin() {
-            alert('Открывается финансовая аналитика...');
-        }
-        
-        function filterBalances(filter) {
-            currentFilter = filter;
-            
-            // Обновить активную кнопку
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Применить фильтр
-            applyFilters();
-        }
-        
-        function searchBalances() {
-            currentSearch = document.getElementById('balanceSearch').value.toLowerCase();
-            applyFilters();
-        }
-        
-        function applyFilters() {
-            let filteredUsers = usersData;
-            
-            // Применить фильтр по роли
-            if (currentFilter === 'student') {
-                filteredUsers = filteredUsers.filter(u => u.role === 'student');
-            } else if (currentFilter === 'tutor') {
-                filteredUsers = filteredUsers.filter(u => u.role === 'tutor');
-            } else if (currentFilter === 'admin') {
-                filteredUsers = filteredUsers.filter(u => u.role === 'admin');
-            } else if (currentFilter === 'positive') {
-                filteredUsers = filteredUsers.filter(u => u.balance > 0);
-            } else if (currentFilter === 'negative') {
-                filteredUsers = filteredUsers.filter(u => u.balance < 0);
+
+        let currentFilter = "all";
+        let searchTerm = "";
+
+        // Вспомогательные функции
+        function getFilteredUsers() {
+            let filtered = [...users];
+            if (currentFilter === "student") filtered = filtered.filter(u => u.role === "student");
+            else if (currentFilter === "tutor") filtered = filtered.filter(u => u.role === "tutor");
+            else if (currentFilter === "admin") filtered = filtered.filter(u => u.role === "admin");
+            else if (currentFilter === "positive") filtered = filtered.filter(u => u.balance > 0);
+            if (searchTerm) {
+                filtered = filtered.filter(u => u.name.toLowerCase().includes(searchTerm) || u.email.toLowerCase().includes(searchTerm));
             }
-            
-            // Применить поиск
-            if (currentSearch) {
-                filteredUsers = filteredUsers.filter(u => 
-                    u.name.toLowerCase().includes(currentSearch) || 
-                    u.email.toLowerCase().includes(currentSearch)
-                );
-            }
-            
-            // Обновить таблицу
-            updateBalanceTable(filteredUsers);
+            return filtered;
         }
-        
-        function updateBalanceTable(users) {
-            const tbody = document.getElementById('balanceTableBody');
-            let html = '';
-            
-            users.forEach(user => {
-                const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
-                const roleClass = user.role === 'admin' ? 'role-admin' : 
-                                 user.role === 'tutor' ? 'role-tutor' : 'role-student';
-                const roleText = user.role === 'admin' ? 'Администратор' : 
-                                user.role === 'tutor' ? 'Репетитор' : 'Ученик';
-                const balanceClass = user.balance > 0 ? 'balance-positive-admin' : 
-                                    user.balance < 0 ? 'balance-negative-admin' : 'balance-zero-admin';
-                const statusClass = user.status === 'active' ? 'status-active-admin' : 
-                                   user.status === 'inactive' ? 'status-inactive-admin' : 'status-pending-admin';
-                const statusText = user.status === 'active' ? 'Активен' : 
-                                  user.status === 'inactive' ? 'Неактивен' : 'Ожидание';
-                
-                // Случайное изменение баланса для демонстрации
-                const change = user.balance > 0 ? Math.floor(Math.random() * 5000) + 1000 : 0;
-                const changeClass = change > 0 ? 'change-positive' : 'change-negative';
-                const changeText = change > 0 ? `+${change.toLocaleString('ru-RU')} ₽` : `${change.toLocaleString('ru-RU')} ₽`;
-                
-                html += `<tr>
+
+        function updateSummary() {
+            let total = 0, studentsTotal = 0, tutorsTotal = 0;
+            users.forEach(u => {
+                total += u.balance;
+                if (u.role === "student") studentsTotal += u.balance;
+                if (u.role === "tutor") tutorsTotal += u.balance;
+            });
+            document.getElementById("totalSystemBalance").innerText = total.toLocaleString('ru-RU') + " ₽";
+            document.getElementById("totalStudentsBalance").innerText = studentsTotal.toLocaleString('ru-RU') + " ₽";
+            document.getElementById("totalTutorsBalance").innerText = tutorsTotal.toLocaleString('ru-RU') + " ₽";
+            document.getElementById("pendingPayouts").innerText = (tutorsTotal * 0.15).toLocaleString('ru-RU') + " ₽";
+            document.getElementById("sysBalanceValue") && (document.getElementById("sysBalanceValue").innerText = total.toLocaleString('ru-RU') + " ₽");
+        }
+
+        function renderTable() {
+            const filtered = getFilteredUsers();
+            const tbody = document.getElementById("tableBody");
+            tbody.innerHTML = "";
+            filtered.forEach(user => {
+                const initials = user.name.split(" ").map(n=>n[0]).join("").toUpperCase();
+                const roleLabel = user.role === "admin" ? "Администратор" : (user.role === "tutor" ? "Репетитор" : "Ученик");
+                const balanceClass = user.balance > 0 ? "balance-positive-admin" : (user.balance < 0 ? "balance-negative-admin" : "");
+                const statusText = user.status === "active" ? "Активен" : "Неактивен";
+                const statusClass = user.status === "active" ? "status-active-admin" : "status-inactive-admin";
+                const row = `<tr>
                     <td>${user.id}</td>
-                    <td>
-                        <div class="user-info-cell">
-                            <div class="user-avatar-small">${initials}</div>
-                            <div>
-                                <div class="user-name">${user.name}</div>
-                                <div class="user-email">${user.email}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td><span class="role-badge ${roleClass}">${roleText}</span></td>
-                    <td class="balance-cell-admin ${balanceClass}">${user.balance.toLocaleString('ru-RU')} ₽</td>
-                    <td>
-                        <span class="balance-change ${changeClass}">${changeText}</span>
-                        <small>За месяц</small>
-                    </td>
+                    <td><div class="user-info-cell"><div class="user-avatar-small">${initials}</div><div><div class="user-name">${user.name}</div><div class="user-email">${user.email}</div></div></div></td>
+                    <td><span class="role-badge role-${user.role}">${roleLabel}</span></td>
+                    <td class="${balanceClass}">${user.balance.toLocaleString('ru-RU')} ₽</td>
                     <td><span class="status-badge-admin ${statusClass}">${statusText}</span></td>
                     <td>${user.lastActive}</td>
-                    <td>
-                        <div class="action-buttons-admin">
-                            <button class="btn-balance-admin" onclick="manageUserBalanceAdmin(${user.id}, '${user.role}')">
-                                <i class="fas fa-money-bill-wave"></i>
-                            </button>
-                            <button class="btn-history-admin" onclick="showUserOperationsAdmin(${user.id}, '${user.role}')">
-                                <i class="fas fa-history"></i>
-                            </button>
-                            <button class="btn-edit-admin" onclick="editUserAdmin(${user.id})">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </div>
-                    </td>
+                    <td><div class="action-buttons-admin"><button onclick="openBalanceModal(${user.id})"><i class="fas fa-money-bill-wave"></i></button><button onclick="alert('История для ${user.name}')"><i class="fas fa-history"></i></button></div></td>
                 </tr>`;
+                tbody.insertAdjacentHTML("beforeend", row);
             });
-            
-            tbody.innerHTML = html;
+            updateSummary();
         }
-        
-        function updateOperationType() {
-            const type = document.getElementById('operationTypeAdmin').value;
-            const notificationSection = document.getElementById('notificationSection');
-            const payoutMethodSection = document.getElementById('payoutMethodSection');
-            
-            // Показывать уведомление только для определенных операций
-            if (type === 'add' || type === 'subtract' || type === 'bonus' || type === 'refund') {
-                notificationSection.style.display = 'block';
-            } else {
-                notificationSection.style.display = 'none';
+
+        function filterTable(filter, btn) {
+            currentFilter = filter;
+            document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            renderTable();
+        }
+
+        function searchBalances() {
+            searchTerm = document.getElementById("searchInput").value.toLowerCase();
+            renderTable();
+        }
+
+        // Модальное управление балансом
+        function openBalanceModal(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+            document.getElementById("modalUserName").innerText = user.name;
+            document.getElementById("modalUserBalance").innerText = user.balance.toLocaleString('ru-RU') + " ₽";
+            document.getElementById("currentUserId").value = userId;
+            document.getElementById("amountInput").value = "";
+            document.getElementById("opType").value = "add";
+            document.getElementById("commentInput").value = "";
+            document.getElementById("balanceModal").style.display = "flex";
+        }
+
+        function processBalanceChange() {
+            const userId = parseInt(document.getElementById("currentUserId").value);
+            const amount = parseFloat(document.getElementById("amountInput").value);
+            const type = document.getElementById("opType").value;
+            const comment = document.getElementById("commentInput").value;
+            if (isNaN(amount) || amount <= 0) { alert("Введите корректную сумму"); return; }
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+            if (type === "add") user.balance += amount;
+            else if (type === "subtract") {
+                if (user.balance < amount) { alert("Недостаточно средств"); return; }
+                user.balance -= amount;
             }
-            
-            // Показывать способ выплаты только для зарплаты
-            if (type === 'salary') {
-                payoutMethodSection.style.display = 'block';
-            } else {
-                payoutMethodSection.style.display = 'none';
-            }
+            alert(`Операция выполнена. Новый баланс ${user.name}: ${user.balance.toLocaleString('ru-RU')} ₽\nКомментарий: ${comment}`);
+            closeModal("balanceModal");
+            renderTable();
         }
-        
-        function processBalanceOperationAdmin() {
-            const userId = document.getElementById('balanceUserIdAdmin').value;
-            const userType = document.getElementById('balanceUserTypeAdmin').value;
-            const operationType = document.getElementById('operationTypeAdmin').value;
-            const amount = document.getElementById('amountAdmin').value;
-            const comment = document.getElementById('commentAdmin').value;
-            
-            alert(`Операция "${operationType}" на сумму ${amount} ₽ для пользователя ${userId} выполнена!\nКомментарий: ${comment}`);
-            closeModal('balanceModalAdmin');
+
+        // Модалки пополнения/списания для быстрых действий
+        function fillUserSelects() {
+            const options = users.map(u => `<option value="${u.id}">${u.name} (${u.role === "student" ? "Ученик" : "Репетитор"}) - ${u.balance.toLocaleString('ru-RU')} ₽</option>`).join("");
+            document.getElementById("userSelectAdd").innerHTML = '<option value="">Выберите</option>' + options;
+            document.getElementById("userSelectWithdraw").innerHTML = '<option value="">Выберите</option>' + options;
         }
-        
-        function processAddMoneyAdmin() {
-            const userId = document.getElementById('selectUserAdmin').value;
-            const amount = document.getElementById('addAmountAdmin').value;
-            const comment = document.getElementById('addCommentAdmin').value;
-            const method = document.getElementById('paymentMethodAdmin').value;
-            
-            if (!userId) {
-                alert('Выберите пользователя');
-                return;
-            }
-            
-            alert(`Пополнение баланса на ${amount} ₽ для пользователя ${userId} выполнено!\nСпособ: ${method}\nКомментарий: ${comment}`);
-            closeModal('addMoneyModalAdmin');
+
+        function showAddMoneyModal() { fillUserSelects(); document.getElementById("addMoneyModal").style.display = "flex"; }
+        function showWithdrawModal() { fillUserSelects(); document.getElementById("withdrawModal").style.display = "flex"; }
+
+        function processAddMoney() {
+            const userId = parseInt(document.getElementById("userSelectAdd").value);
+            const amount = parseFloat(document.getElementById("addAmount").value);
+            const comment = document.getElementById("addComment").value;
+            if (!userId || isNaN(amount) || amount <= 0) { alert("Выберите пользователя и сумму"); return; }
+            const user = users.find(u => u.id === userId);
+            if (user) { user.balance += amount; alert(`Пополнение на ${amount}₽. Новый баланс ${user.name}: ${user.balance.toLocaleString('ru-RU')}₽`); }
+            closeModal("addMoneyModal");
+            renderTable();
         }
-        
-        function processWithdrawAdmin() {
-            const userId = document.getElementById('selectUserWithdrawAdmin').value;
-            const amount = document.getElementById('withdrawAmountAdmin').value;
-            const reason = document.getElementById('withdrawReasonAdmin').value;
-            const comment = document.getElementById('withdrawCommentAdmin').value;
-            
-            if (!userId) {
-                alert('Выберите пользователя');
-                return;
-            }
-            
-            alert(`Списание ${amount} ₽ с баланса пользователя ${userId} выполнено!\nПричина: ${reason}\nКомментарий: ${comment}`);
-            closeModal('withdrawModalAdmin');
+
+        function processWithdraw() {
+            const userId = parseInt(document.getElementById("userSelectWithdraw").value);
+            const amount = parseFloat(document.getElementById("withdrawAmount").value);
+            const comment = document.getElementById("withdrawComment").value;
+            if (!userId || isNaN(amount) || amount <= 0) { alert("Выберите пользователя и сумму"); return; }
+            const user = users.find(u => u.id === userId);
+            if (user && user.balance >= amount) { user.balance -= amount; alert(`Списано ${amount}₽. Новый баланс ${user.name}: ${user.balance.toLocaleString('ru-RU')}₽`); }
+            else if (user) alert("Недостаточно средств");
+            closeModal("withdrawModal");
+            renderTable();
         }
-        
-        function exportBalancesCSV() {
-            alert('Экспорт балансов в CSV выполнен');
+
+        function showSystemBalance() {
+            updateSummary();
+            document.getElementById("systemBalanceModal").style.display = "flex";
         }
-        
-        function exportBalancesPDF() {
-            alert('Экспорт балансов в PDF выполнен');
+
+        function showMoneyStatsAdmin() {
+            const total = users.reduce((s,u)=>s+u.balance,0);
+            alert(`📊 Финансовая статистика\nОбщий баланс: ${total.toLocaleString('ru-RU')} ₽\nУченики: ${users.filter(u=>u.role==='student').reduce((s,u)=>s+u.balance,0).toLocaleString('ru-RU')} ₽\nРепетиторы: ${users.filter(u=>u.role==='tutor').reduce((s,u)=>s+u.balance,0).toLocaleString('ru-RU')} ₽`);
         }
+
+        function exportAllBalancesCSV() { exportDataToCSV(users, "all_balances"); }
+        function exportCSV() { exportDataToCSV(getFilteredUsers(), "balances_filtered"); }
+        function exportExcel() { exportToExcel(getFilteredUsers(), "balances_export"); }
         
-        function exportBalancesExcel() {
-            alert('Экспорт балансов в Excel выполнен');
+        function exportDataToCSV(data, filename) {
+            if (!data.length) { alert("Нет данных"); return; }
+            const headers = ["ID","Имя","Email","Роль","Баланс","Статус","Последняя активность"];
+            const rows = data.map(u => [u.id, u.name, u.email, u.role==="admin"?"Админ":u.role==="tutor"?"Репетитор":"Ученик", u.balance, u.status==="active"?"Активен":"Неактивен", u.lastActive]);
+            const csvContent = [headers, ...rows].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
+            const blob = new Blob(["\uFEFF" + csvContent], {type: "text/csv;charset=utf-8;"});
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `${filename}.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
         }
-        
-        function exportAllBalances() {
-            alert('Экспорт всех балансов выполнен');
+
+        function exportToExcel(data, filename) {
+            if (!data.length) { alert("Нет данных"); return; }
+            const wsData = data.map(u => ({ID: u.id, Имя: u.name, Email: u.email, Роль: u.role==="admin"?"Админ":u.role==="tutor"?"Репетитор":"Ученик", Баланс: u.balance, Статус: u.status==="active"?"Активен":"Неактивен", "Посл.активность": u.lastActive}));
+            const ws = XLSX.utils.json_to_sheet(wsData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Балансы");
+            XLSX.writeFile(wb, `${filename}.xlsx`);
         }
-        
-        function showAllOperations() {
-            alert('Открывается история всех операций...');
+
+        async function exportPDF() {
+            const data = getFilteredUsers();
+            if (!data.length) { alert("Нет данных"); return; }
+            const rowsHtml = data.map(u => `<tr><td>${u.id}</td><td>${u.name}</td><td>${u.email}</td><td>${u.role==="admin"?"Админ":u.role==="tutor"?"Репетитор":"Ученик"}</td><td>${u.balance.toLocaleString('ru-RU')} ₽</td><td>${u.status==="active"?"Активен":"Неактивен"}</td><td>${u.lastActive}</td></tr>`).join("");
+            const html = `<html><head><meta charset="UTF-8"><title>Балансы</title><style>body{font-family:sans-serif;} table{border-collapse:collapse;width:100%} th,td{border:1px solid #ccc;padding:8px;text-align:left}</style></head><body><h2>Отчет по балансам</h2><table><thead><tr><th>ID</th><th>Имя</th><th>Email</th><th>Роль</th><th>Баланс</th><th>Статус</th><th>Активность</th></tr></thead><tbody>${rowsHtml}</tbody></table></body></html>`;
+            const element = document.createElement("div");
+            element.innerHTML = html;
+            document.body.appendChild(element);
+            await html2pdf().from(element).set({margin:0.5, filename:`balances_${Date.now()}.pdf`, html2canvas:{scale:2}}).save();
+            document.body.removeChild(element);
         }
-        
-        function showBalanceCorrections() {
-            alert('Открываются корректировки балансов...');
-        }
-        
-        function showSystemOperations() {
-            alert('Открываются системные операции...');
-        }
-        
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-        
-        // Инициализация при загрузке
-        document.addEventListener('DOMContentLoaded', function() {
-            // Инициализировать таблицу
-            updateBalanceTable(usersData);
-            
-            // Добавим стили для user-balance-header
-            const style = document.createElement('style');
-            style.textContent = `
-                .user-balance-header {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                    margin-right: 1rem;
-                }
-                .balance-amount {
-                    font-weight: 600;
-                    color: var(--primary);
-                }
-                .btn-balance {
-                    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-                    color: white;
-                    border: none;
-                    padding: 0.5rem 1rem;
-                    border-radius: 0.5rem;
-                    cursor: pointer;
-                }
-                .btn-balance:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-                }
-                
-                /* Адаптивность для таблицы */
-                @media (max-width: 768px) {
-                    .admin-balance-table {
-                        font-size: 0.9rem;
-                    }
-                    .admin-balance-table th,
-                    .admin-balance-table td {
-                        padding: 0.5rem;
-                    }
-                    .user-info-cell {
-                        flex-direction: column;
-                        align-items: flex-start;
-                        gap: 0.25rem;
-                    }
-                    .action-buttons-admin {
-                        flex-direction: column;
-                        gap: 0.25rem;
-                    }
-                    .admin-balance-filters {
-                        flex-wrap: wrap;
-                    }
-                    .search-box-admin {
-                        width: 100%;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
+
+        function closeModal(id) { document.getElementById(id).style.display = "none"; }
+        window.onclick = e => { if (e.target.classList && e.target.classList.contains("modal")) e.target.style.display = "none"; };
+
+        // Темная тема
+        document.getElementById("themeToggle")?.addEventListener("click", () => {
+            document.body.classList.toggle("dark");
         });
-        
-        // Закрытие модальных окон при клике вне их
-        window.onclick = function(event) {
-            const modals = ['balanceModalAdmin', 'operationsModalAdmin', 'addMoneyModalAdmin', 
-                          'withdrawModalAdmin', 'systemBalanceModal'];
-            modals.forEach(modalId => {
-                const modal = document.getElementById(modalId);
-                if (event.target === modal) {
-                    closeModal(modalId);
-                }
-            });
-        };
+
+        renderTable();
+        updateSummary();
     </script>
 </body>
 </html>

@@ -4,667 +4,432 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Репетиторы - УчебаВместе</title>
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .balance-table {
-            margin-top: 3rem;
+        /* ----- ОРИГИНАЛЬНЫЕ СТИЛИ ----- */
+        :root {
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --fg: #1e293b;
+            --muted-fg: #64748b;
+            --primary: #3b82f6;
+            --shadow: rgba(0,0,0,0.05);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.5;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+        header {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .logo a { font-size: 1.5rem; font-weight: bold; text-decoration: none; color: var(--primary); }
+        nav { display: flex; gap: 1.5rem; }
+        nav a { text-decoration: none; color: var(--fg); font-weight: 500; }
+        .user-profile { display: flex; align-items: center; gap: 1rem; }
+        .user-avatar {
+            width: 40px; height: 40px; background: var(--primary); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;
+        }
+        .btn {
+            padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; border: none;
+            font-weight: 500; transition: 0.2s;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--fg); }
+        .teachers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        .teacher-card {
             background: var(--card);
             border-radius: 1rem;
             overflow: hidden;
             box-shadow: 0 4px 20px var(--shadow);
+            transition: transform 0.2s;
         }
-        
-        .balance-table-header {
+        .teacher-card:hover { transform: translateY(-4px); }
+        .teacher-card-header {
+            display: flex;
+            gap: 1rem;
             padding: 1.5rem;
             border-bottom: 1px solid var(--border);
         }
-        
-        .balance-table-header h2 {
-            margin: 0;
-            color: var(--fg);
+        .teacher-avatar img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
         }
-        
-        .balance-table table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .balance-table th {
+        .teacher-name { margin: 0 0 0.25rem; font-size: 1.25rem; }
+        .teacher-subjects { color: var(--muted-fg); }
+        .teacher-stats {
+            display: flex;
+            justify-content: space-around;
             background: var(--bg);
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: var(--muted-fg);
-            border-bottom: 2px solid var(--border);
+            padding: 0.75rem;
         }
-        
-        .balance-table td {
-            padding: 1rem;
+        .stat-value { font-size: 1.3rem; font-weight: bold; color: var(--primary); }
+        .teacher-description { padding: 1rem 1.5rem; }
+        .teacher-actions { padding: 0 1.5rem 1.5rem; display: flex; gap: 1rem; }
+        .not-taking-text {
+            display: block; font-size: 0.85rem; padding: 0 1.5rem 1.5rem; color: #f59e0b;
+        }
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: var(--card);
+            width: 90%;
+            max-width: 500px;
+            border-radius: 1rem;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.2);
+            animation: fadeIn 0.2s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
             border-bottom: 1px solid var(--border);
         }
-        
-        .balance-cell {
-            font-weight: 600;
-            font-family: 'Courier New', monospace;
-        }
-        
-        .balance-positive {
-            color: #10b981;
-        }
-        
-        .balance-negative {
-            color: #ef4444;
-        }
-        
-        .balance-warning {
-            color: #f59e0b;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .btn-balance {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
+        .modal-close {
+            background: none;
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
+            font-size: 1.8rem;
             cursor: pointer;
-            transition: transform 0.2s;
+            color: var(--muted-fg);
         }
-        
-        .btn-balance:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-        
-        .btn-history {
-            background: var(--bg);
-            color: var(--fg);
-            border: 1px solid var(--border);
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-        }
-        
-        .btn-history:hover {
-            background: var(--border);
-        }
-        
-        .status-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-        
-        .status-active {
-            background: #dcfce7;
-            color: #15803d;
-        }
-        
-        .status-inactive {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-        
-        .balance-actions {
+        .modal-body { padding: 1.5rem; }
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
             display: flex;
             justify-content: flex-end;
             gap: 1rem;
-            margin-top: 2rem;
         }
-        
-        .teacher-avatar-img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: var(--bg);
+            color: var(--fg);
+        }
+        .btn-secondary { background: #e2e8f0; color: var(--fg); }
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            background: var(--card);
+            border-top: 1px solid var(--border);
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header>
         <div class="container">
             <div class="header-content">
-                <div class="logo">
-                    <a href="index.html" class="logo-link">УчебаВместе</a>
-                </div>
+                <div class="logo"><a href="index.html">УчебаВместе</a></div>
                 <nav>
                     <a href="index.html#subjects">Предметы</a>
                     <a href="teacher.html">Репетиторы</a>
                 </nav>
-                <div class="header-actions">
-                  <div class="user-info">
-
-                        </div>                 
-                           <div class="user-profile">
-                        <div class="user-avatar">${initials}</div>
-                        <div class="user-info">
-                            <span class="user-greeting">Здравствуйте,</span>
-                            <a href="profile.html" class="user-name">Иван</a>
-                        </div>
-                        <button onclick="logout()" class="btn btn-outline btn-sm">Выйти</button>
+                <div class="user-profile" id="userProfile">
+                    <div class="user-avatar" id="userAvatar">Г</div>
+                    <div class="user-info">
+                        <span id="userGreeting">Здравствуйте,</span>
+                        <a href="profile.html" id="userNameLink">Гость</a>
                     </div>
-                    <div id="userAuthSection"></div>
+                    <button id="logoutBtn" class="btn btn-outline" style="display: none;" onclick="logout()">Выйти</button>
+                    <button id="loginBtn" class="btn btn-primary" onclick="redirectToLogin()">Войти</button>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Teachers List Section -->
     <section class="teachers-section">
         <div class="container">
-            <div class="section-header">
+            <div class="section-header" style="text-align: center; margin: 2rem 0;">
                 <h1>Наши репетиторы</h1>
                 <p>Выберите подходящего репетитора из нашей команды профессионалов</p>
             </div>
-
-            <div class="teachers-grid">
-                <!-- Анна Петрова -->
-                <div class="teacher-card">
-                    <div class="teacher-card-header">
-                        <div class="teacher-avatar">
-                            <img src="img/АннаПетрова.jpg" alt="Анна Петрова" onerror="this.src='https://ui-avatars.com/api/?name=Анна+Петрова&background=01497c&color=fff&size=400'">
-                        </div>
-                        <div class="teacher-info">
-                            <h2 class="teacher-name">Анна Петрова</h2>
-                            <p class="teacher-subjects">Математика, Физика</p>
-                        </div>
-                    </div>
-                    <div class="teacher-stats">
-                        <div class="teacher-stat">
-                            <div class="stat-value">8 лет</div>
-                            <div class="stat-label">Опыт</div>
-                        </div>
-                        <div class="teacher-stat">
-                            <div class="stat-value">350+</div>
-                            <div class="stat-label">Учеников</div>
-                        </div>
-                    </div>
-                    <p class="teacher-description">Кандидат физико-математических наук. Специализация подготовка к ЕГЭ и олимпиадам.</p>
-                    <div class="teacher-actions">
-                        <button class="btn btn-primary" onclick="openBookingModal(1)">Записаться</button>
-                        <button class="btn btn-outline" onclick="viewTeacherProfile(1)">Профиль</button>
-                    </div>
-                </div>
-
-                <!-- Алексей Козлов -->
-                <div class="teacher-card">
-                    <div class="teacher-card-header">
-                        <div class="teacher-avatar">
-                            <img src="img/АлексейКозлов.png" alt="Алексей Козлов" onerror="this.src='https://ui-avatars.com/api/?name=Алексей+Козлов&background=2a6f97&color=fff&size=400'">
-                        </div>
-                        <div class="teacher-info">
-                            <h2 class="teacher-name">Алексей Козлов</h2>
-                            <p class="teacher-subjects">Физика, Математика</p>
-                        </div>
-                    </div>
-                    <div class="teacher-stats">
-                        <div class="teacher-stat">
-                            <div class="stat-value">7 лет</div>
-                            <div class="stat-label">Опыт</div>
-                        </div>
-                        <div class="teacher-stat">
-                            <div class="stat-value">290+</div>
-                            <div class="stat-label">Учеников</div>
-                        </div>
-                    </div>
-                    <p class="teacher-description">Преподаватель вуза. Специализация подготовка к ЕГЭ и олимпиадам по физике.</p>
-                    <div class="teacher-actions">
-                        <button class="btn btn-primary" onclick="openBookingModal(2)">Записаться</button>
-                        <button class="btn btn-outline" onclick="viewTeacherProfile(2)">Профиль</button>
-                    </div>
-                </div>
-
-                <!-- Иван Сидоров -->
-                <div class="teacher-card">
-                    <div class="teacher-card-header">
-                        <div class="teacher-avatar">
-                            <img src="img/ИванСидоров.jpg" alt="Иван Сидоров" onerror="this.src='https://ui-avatars.com/api/?name=Иван+Сидоров&background=014f86&color=fff&size=400'">
-                        </div>
-                        <div class="teacher-info">
-                            <h2 class="teacher-name">Иван Сидоров</h2>
-                            <p class="teacher-subjects">Английский язык</p>
-                        </div>
-                    </div>
-                    <div class="teacher-stats">
-                        <div class="teacher-stat">
-                            <div class="stat-value">6 лет</div>
-                            <div class="stat-label">Опыт</div>
-                        </div>
-                        <div class="teacher-stat">
-                            <div class="stat-value">420+</div>
-                            <div class="stat-label">Учеников</div>
-                        </div>
-                    </div>
-                    <p class="teacher-description">Сертифицированный специалист с международным опытом. Подготовка к IELTS, TOEFL.</p>
-                    <div class="teacher-actions">
-                        <button class="btn btn-primary" onclick="openBookingModal(3)">Записаться</button>
-                        <button class="btn btn-outline" onclick="viewTeacherProfile(3)">Профиль</button>
-                    </div>
-                </div>
-
-                <!-- Елена Смирнова -->
-                <div class="teacher-card">
-                    <div class="teacher-card-header">
-                        <div class="teacher-avatar">
-                            <img src="img/Елена Смирнова.jpg" alt="Елена Смирнова" onerror="this.src='https://ui-avatars.com/api/?name=Елена+Смирнова&background=468faf&color=fff&size=400'">
-                        </div>
-                        <div class="teacher-info">
-                            <h2 class="teacher-name">Елена Смирнова</h2>
-                            <p class="teacher-subjects">Химия, Биология</p>
-                        </div>
-                    </div>
-                    <div class="teacher-stats">
-                        <div class="teacher-stat">
-                            <div class="stat-value">9 лет</div>
-                            <div class="stat-label">Опыт</div>
-                        </div>
-                        <div class="teacher-stat">
-                            <div class="stat-value">320+</div>
-                            <div class="stat-label">Учеников</div>
-                        </div>
-                    </div>
-                    <p class="teacher-description">Кандидат химических наук. Авторская методика подготовки к ЕГЭ и олимпиадам.</p>
-                    <div class="teacher-actions">
-                        <button class="btn btn-primary" onclick="openBookingModal(4)">Записаться</button>
-                        <button class="btn btn-outline" onclick="viewTeacherProfile(4)">Профиль</button>
-                    </div>
-                </div>
-
-                <!-- Мария Иванова -->
-                <div class="teacher-card">
-                    <div class="teacher-card-header">
-                        <div class="teacher-avatar">
-                            <img src="img/МарияИванова.png" alt="Мария Иванова" onerror="this.src='https://ui-avatars.com/api/?name=Мария+Иванова&background=013a63&color=fff&size=400'">
-                        </div>
-                        <div class="teacher-info">
-                            <h2 class="teacher-name">Мария Иванова</h2>
-                            <p class="teacher-subjects">Русский язык, Литература</p>
-                        </div>
-                    </div>
-                    <div class="teacher-stats">
-                        <div class="teacher-stat">
-                            <div class="stat-value">10 лет</div>
-                            <div class="stat-label">Опыт</div>
-                        </div>
-                        <div class="teacher-stat">
-                            <div class="stat-value">380+</div>
-                            <div class="stat-label">Учеников</div>
-                        </div>
-                    </div>
-                    <p class="teacher-description">Эксперт ЕГЭ по русскому языку. Автор учебных пособий для подготовки к экзаменам.</p>
-                    <div class="teacher-actions">
-                        <button class="btn btn-primary" onclick="openBookingModal(5)">Записаться</button>
-                        <button class="btn btn-outline" onclick="viewTeacherProfile(5)">Профиль</button>
-                    </div>
-                </div>
-
-                <!-- Дмитрий Попов -->
-                <div class="teacher-card">
-                    <div class="teacher-card-header">
-                        <div class="teacher-avatar">
-                            <img src="img/Дмитрий Попов.jpg" alt="Дмитрий Попов" onerror="this.src='https://ui-avatars.com/api/?name=Дмитрий+Попов&background=012a4a&color=fff&size=400'">
-                        </div>
-                        <div class="teacher-info">
-                            <h2 class="teacher-name">Дмитрий Попов</h2>
-                            <p class="teacher-subjects">Программирование, Математика</p>
-                        </div>
-                    </div>
-                    <div class="teacher-stats">
-                        <div class="teacher-stat">
-                            <div class="stat-value">5 лет</div>
-                            <div class="stat-label">Опыт</div>
-                        </div>
-                        <div class="teacher-stat">
-                            <div class="stat-value">450+</div>
-                            <div class="stat-label">Учеников</div>
-                        </div>
-                    </div>
-                    <p class="teacher-description">Senior разработчик. Преподаваю Python, JavaScript, алгоритмы и структуры данных.</p>
-                    <div class="teacher-actions">
-                        <button class="btn btn-primary" onclick="openBookingModal(6)">Записаться</button>
-                        <button class="btn btn-outline" onclick="viewTeacherProfile(6)">Профиль</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Таблица баланса репетиторов -->
-            <div class="balance-table" id="balanceTableSection" style="margin-top: 4rem;">
-                <div class="balance-table-header">
-                    <h2><i class="fas fa-money-bill-wave"></i> Финансовые балансы репетиторов</h2>
-                    <p style="margin-top: 0.5rem; color: var(--muted-fg);">Управление балансами и выплатами</p>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Репетитор</th>
-                            <th>Предметы</th>
-                            <th>Баланс</th>
-                            <th>Статус</th>
-                            <th>Действия</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tutorsBalanceTable">
-                        <tr>
-                            <td>1</td>
-                            <td>
-                                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                    <img src="img/АннаПетрова.jpg" alt="Анна Петрова" class="teacher-avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=Анна+Петрова&background=01497c&color=fff&size=400'">
-                                    <div>
-                                        <strong>Анна Петрова</strong><br>
-                                        <small style="color: var(--muted-fg);">anna@ucheba-vmeste.ru</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>Математика, Физика</td>
-                            <td class="balance-cell balance-positive">45,000 ₽</td>
-                            <td><span class="status-badge status-active">Активен</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-balance" onclick="manageUserBalance(1, 'tutor')">
-                                        <i class="fas fa-money-bill-wave"></i>
-                                    </button>
-                                    <button class="btn btn-history" onclick="showUserOperations(1, 'tutor')">
-                                        <i class="fas fa-history"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>
-                                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                    <img src="img/АлексейКозлов.png" alt="Алексей Козлов" class="teacher-avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=Алексей+Козлов&background=2a6f97&color=fff&size=400'">
-                                    <div>
-                                        <strong>Алексей Козлов</strong><br>
-                                        <small style="color: var(--muted-fg);">alexey@ucheba-vmeste.ru</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>Физика, Математика</td>
-                            <td class="balance-cell balance-positive">38,500 ₽</td>
-                            <td><span class="status-badge status-active">Активен</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-balance" onclick="manageUserBalance(2, 'tutor')">
-                                        <i class="fas fa-money-bill-wave"></i>
-                                    </button>
-                                    <button class="btn btn-history" onclick="showUserOperations(2, 'tutor')">
-                                        <i class="fas fa-history"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>
-                                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                    <img src="img/ИванСидоров.jpg" alt="Иван Сидоров" class="teacher-avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=Иван+Сидоров&background=014f86&color=fff&size=400'">
-                                    <div>
-                                        <strong>Иван Сидоров</strong><br>
-                                        <small style="color: var(--muted-fg);">ivan@ucheba-vmeste.ru</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>Английский язык</td>
-                            <td class="balance-cell balance-positive">52,300 ₽</td>
-                            <td><span class="status-badge status-active">Активен</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-balance" onclick="manageUserBalance(3, 'tutor')">
-                                        <i class="fas fa-money-bill-wave"></i>
-                                    </button>
-                                    <button class="btn btn-history" onclick="showUserOperations(3, 'tutor')">
-                                        <i class="fas fa-history"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>
-                                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                    <img src="img/Елена Смирнова.jpg" alt="Елена Смирнова" class="teacher-avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=Елена+Смирнова&background=468faf&color=fff&size=400'">
-                                    <div>
-                                        <strong>Елена Смирнова</strong><br>
-                                        <small style="color: var(--muted-fg);">elena@ucheba-vmeste.ru</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>Химия, Биология</td>
-                            <td class="balance-cell balance-positive">41,200 ₽</td>
-                            <td><span class="status-badge status-active">Активен</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-balance" onclick="manageUserBalance(4, 'tutor')">
-                                        <i class="fas fa-money-bill-wave"></i>
-                                    </button>
-                                    <button class="btn btn-history" onclick="showUserOperations(4, 'tutor')">
-                                        <i class="fas fa-history"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="balance-actions">
-                    <button class="btn btn-primary" onclick="exportBalanceReport('tutors')">
-                        <i class="fas fa-download"></i> Экспорт отчета
-                    </button>
-                    <button class="btn btn-outline" onclick="showBalanceStats()">
-                        <i class="fas fa-chart-pie"></i> Статистика
-                    </button>
-                </div>
-            </div>
+            <div class="teachers-grid" id="teachersGrid"></div>
         </div>
     </section>
 
-    <!-- Booking Modal -->
-    <div class="modal" id="bookingModal">
+    <!-- Модальное окно записи -->
+    <div id="bookingModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="bookingTeacherName">Запись на урок</h2>
-                <button class="modal-close" onclick="closeModal('bookingModal')">×</button>
-            </div>
-            <form id="bookingForm">
-                <input type="hidden" id="selectedTeacherId">
-                <div class="form-group">
-                    <label for="bookingDate">Дата урока</label>
-                    <input type="date" id="bookingDate" required>
-                </div>
-                <div class="form-group">
-                    <label for="bookingTime">Время урока</label>
-                    <select id="bookingTime" required>
-                        <option value="">Выберите время</option>
-                        <option value="09:00-10:00">09:00 - 10:00</option>
-                        <option value="10:30-11:30">10:30 - 11:30</option>
-                        <option value="12:00-13:00">12:00 - 13:00</option>
-                        <option value="14:00-15:00">14:00 - 15:00</option>
-                        <option value="16:00-17:00">16:00 - 17:00</option>
-                        <option value="18:00-19:00">18:00 - 19:00</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="bookingSubject">Предмет</label>
-                    <input type="text" id="bookingSubject" required>
-                </div>
-                <div class="form-group">
-                    <label for="bookingNotes">Дополнительные пожелания</label>
-                    <textarea id="bookingNotes" rows="3" placeholder="Укажите темы, которые хотите изучить..."></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary btn-full">Забронировать урок</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Balance Management Modal -->
-    <div class="modal" id="balanceModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-money-bill-wave"></i> Управление балансом</h2>
-                <button class="modal-close" onclick="closeModal('balanceModal')">×</button>
+                <button class="modal-close" id="closeModalBtn">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="balance-info">
-                    <p><strong>Пользователь:</strong> <span id="balanceUserName">-</span></p>
-                    <p><strong>Текущий баланс:</strong> <span id="currentUserBalance" class="balance-positive">0 ₽</span></p>
-                </div>
-                
-                <form id="balanceForm">
-                    <input type="hidden" id="balanceUserId">
-                    <input type="hidden" id="balanceUserType">
-                    
+                <form id="bookingForm">
+                    <input type="hidden" id="selectedTeacherId">
                     <div class="form-group">
-                        <label for="operationType">Тип операции</label>
-                        <select id="operationType" class="form-control">
-                            <option value="add">Пополнение</option>
-                            <option value="subtract">Списание</option>
-                            <option value="bonus">Бонус</option>
-                            <option value="salary">Зарплата</option>
+                        <label for="bookingDate">Дата урока</label>
+                        <input type="date" id="bookingDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookingTime">Время урока</label>
+                        <select id="bookingTime" required>
+                            <option value="">Выберите время</option>
+                            <option value="09:00-10:00">09:00 - 10:00</option>
+                            <option value="10:30-11:30">10:30 - 11:30</option>
+                            <option value="12:00-13:00">12:00 - 13:00</option>
+                            <option value="14:00-15:00">14:00 - 15:00</option>
+                            <option value="16:00-17:00">16:00 - 17:00</option>
+                            <option value="18:00-19:00">18:00 - 19:00</option>
                         </select>
                     </div>
-                    
                     <div class="form-group">
-                        <label for="amount">Сумма (₽)</label>
-                        <input type="number" id="amount" class="form-control" min="1" required>
+                        <label for="bookingSubject">Предмет</label>
+                        <input type="text" id="bookingSubject" required>
                     </div>
-                    
                     <div class="form-group">
-                        <label for="comment">Комментарий</label>
-                        <textarea id="comment" class="form-control" rows="3" placeholder="Причина операции..."></textarea>
+                        <label for="bookingNotes">Дополнительные пожелания</label>
+                        <textarea id="bookingNotes" rows="3" placeholder="Укажите темы, которые хотите изучить..."></textarea>
+                    </div>
+                    <div class="modal-footer" style="padding-left:0; padding-right:0;">
+                        <button type="button" class="btn btn-secondary" id="cancelModalBtn">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Забронировать урок</button>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('balanceModal')">Отмена</button>
-                <button class="btn btn-primary" onclick="processBalanceOperation()">Выполнить операцию</button>
-            </div>
         </div>
     </div>
 
-    <!-- Operations History Modal -->
-    <div class="modal" id="operationsModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>История операций</h2>
-                <button class="modal-close" onclick="closeModal('operationsModal')">×</button>
-            </div>
-            <div class="modal-body">
-                <div id="operationsModalContent">
-                    <div style="text-align: center; padding: 2rem;">
-                        <i class="fas fa-history" style="font-size: 3rem; color: var(--muted-fg); margin-bottom: 1rem;"></i>
-                        <h3>История операций</h3>
-                        <p>Здесь будет отображаться история всех финансовых операций</p>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('operationsModal')">Закрыть</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
     <footer>
         <div class="container">
-            <div class="footer-grid">
-                <div class="footer-section">
-                    <h4>УчебаВместе</h4>
-                    <p>Онлайн репетиторский сервис с лучшими преподавателями. Помогаем достигать учебных целей с 2020 года.</p>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Навигация</h4>
-                    <ul>
-                        <li><a href="index.html">Главная</a></li>
-                        <li><a href="index.html#subjects">Предметы</a></li>
-                        <li><a href="teacher.html">Репетиторы</a></li>
-                        <li><a href="profile.html">Личный кабинет</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Контакты</h4>
-                    <ul>
-                        <li>📞 +7 (999) 123-45-67</li>
-                        <li>✉️ info@ucheba-vmeste.ru</li>
-                        <li>🕒 Ежедневно 9:00-21:00</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 УчебаВместе. Все права защищены.</p>
-            </div>
+            <p>&copy; 2025 УчебаВместе. Все права защищены.</p>
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
-    <script src="js/teacher.js"></script>
-    <script src="js/balance_functions.js"></script>
-    
     <script>
-        // Простые функции для демонстрации
-        function manageUserBalance(userId, userType) {
-            // В реальном приложении здесь будет запрос к серверу
-            const userNames = {
-                1: 'Анна Петрова',
-                2: 'Алексей Козлов',
-                3: 'Иван Сидоров',
-                4: 'Елена Смирнова'
+        // ======================= ДАННЫЕ С ЛОКАЛЬНЫМИ КАРТИНКАМИ =======================
+        let tutors = [];
+
+        function initDemoTutors() {
+            const stored = localStorage.getItem('ucheba_tutors');
+            if (stored) {
+                tutors = JSON.parse(stored);
+            } else {
+                tutors = [
+                    { id: 1, name: 'Анна Петрова', subjects: 'Математика, Физика', balance: 45000, email: 'anna@ucheba-vmeste.ru', avatar: 'img/Анна Петрова.png', status: 'active', accepting_students: true },
+                    { id: 2, name: 'Алексей Козлов', subjects: 'Физика, Математика', balance: 38500, email: 'alexey@ucheba-vmeste.ru', avatar: 'img/Алексей Козлов.png', status: 'active', accepting_students: true },
+                    { id: 3, name: 'Иван Сидоров', subjects: 'Английский язык', balance: 52300, email: 'ivan@ucheba-vmeste.ru', avatar: 'img/Иван Сидоров.png', status: 'active', accepting_students: false },
+                    { id: 4, name: 'Елена Смирнова', subjects: 'Химия, Биология', balance: 41200, email: 'elena@ucheba-vmeste.ru', avatar: 'img/Елена Смирнова.png', status: 'active', accepting_students: true },
+                    { id: 5, name: 'Мария Иванова', subjects: 'Русский язык, Литература', balance: 30000, email: 'maria@ucheba-vmeste.ru', avatar: 'img/Мария Иванова.png', status: 'active', accepting_students: true },
+                    { id: 6, name: 'Дмитрий Попов', subjects: 'Программирование, Математика', balance: 25000, email: 'dmitry@ucheba-vmeste.ru', avatar: 'img/Дмитрий Попов.png', status: 'active', accepting_students: false }
+                ];
+                localStorage.setItem('ucheba_tutors', JSON.stringify(tutors));
+            }
+        }
+
+        let currentUser = null;
+
+        function loadCurrentUser() {
+            const stored = localStorage.getItem('ucheba_current_user');
+            if (stored) {
+                try { currentUser = JSON.parse(stored); } catch(e) { currentUser = null; }
+            }
+            updateHeaderUI();
+        }
+
+        function updateHeaderUI() {
+            const avatarDiv = document.getElementById('userAvatar');
+            const userNameLink = document.getElementById('userNameLink');
+            const loginBtn = document.getElementById('loginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const greetingSpan = document.getElementById('userGreeting');
+            if (currentUser) {
+                greetingSpan.innerText = 'Здравствуйте,';
+                userNameLink.innerText = currentUser.name || 'Пользователь';
+                userNameLink.href = 'profile.html';
+                avatarDiv.innerText = (currentUser.name ? currentUser.name.charAt(0) : 'П').toUpperCase();
+                loginBtn.style.display = 'none';
+                logoutBtn.style.display = 'inline-block';
+            } else {
+                greetingSpan.innerText = 'Вы не авторизованы,';
+                userNameLink.innerText = 'войдите';
+                userNameLink.href = '#';
+                userNameLink.onclick = (e) => { e.preventDefault(); redirectToLogin(); };
+                avatarDiv.innerText = 'Г';
+                loginBtn.style.display = 'inline-block';
+                logoutBtn.style.display = 'none';
+            }
+        }
+
+        function redirectToLogin() { window.location.href = 'login_simple.html'; }
+        function logout() {
+            localStorage.removeItem('ucheba_current_user');
+            currentUser = null;
+            updateHeaderUI();
+            alert('Вы вышли из системы');
+            location.reload();
+        }
+
+        // Отрисовка карточек с локальными картинками + fallback на инициалы
+        function renderTeachers() {
+            const grid = document.getElementById('teachersGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            tutors.forEach(t => {
+                const isAccepting = t.accepting_students === true;
+                const btnDisabled = !isAccepting ? 'disabled' : '';
+                const btnTitle = !isAccepting ? 'Репетитор временно не принимает учеников' : '';
+                const notTakingHtml = !isAccepting ? '<span class="not-taking-text"><i class="fas fa-ban"></i> Не принимает новых учеников</span>' : '';
+                const avatarUrl = t.avatar || '';
+                // fallback: если картинка не загрузится, показываем инициалы
+                const fallbackInitials = t.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                const onerror = `this.onerror=null; this.parentElement.innerHTML='<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#1e40af);display:flex;align-items:center;justify-content:center;color:white;font-size:2rem;font-weight:bold;">${fallbackInitials}</div>';`;
+                const card = document.createElement('div');
+                card.className = 'teacher-card';
+                card.innerHTML = `
+                    <div class="teacher-card-header">
+                        <div class="teacher-avatar">
+                            <img src="${avatarUrl}" alt="${t.name}" onerror="${onerror}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;">
+                        </div>
+                        <div>
+                            <h2 class="teacher-name">${t.name}</h2>
+                            <p class="teacher-subjects">${t.subjects}</p>
+                        </div>
+                    </div>
+                    <div class="teacher-stats">
+                        <div><div class="stat-value">${Math.floor(Math.random()*8)+5} лет</div><div>Опыт</div></div>
+                        <div><div class="stat-value">${Math.floor(Math.random()*400)+200}+</div><div>Учеников</div></div>
+                    </div>
+                    <p class="teacher-description">${t.name} — репетитор по ${t.subjects.split(',')[0]}, подготовка к экзаменам.</p>
+                    <div class="teacher-actions">
+                        <button class="btn btn-primary" onclick="openBookingModal(${t.id})" ${btnDisabled} title="${btnTitle}">Записаться</button>
+                        <button class="btn btn-outline" onclick="viewProfile(${t.id})">Профиль</button>
+                    </div>
+                    ${notTakingHtml}
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function viewProfile(teacherId) { alert(`Профиль репетитора ID ${teacherId}. Полная версия в разработке.`); }
+
+        // ОТКРЫТИЕ МОДАЛЬНОГО ОКНА ЗАПИСИ
+        window.openBookingModal = function(teacherId) {
+            if (!currentUser) {
+                alert('Для записи на урок необходимо войти в систему.');
+                redirectToLogin();
+                return;
+            }
+            const teacher = tutors.find(t => t.id === teacherId);
+            if (!teacher) { alert('Репетитор не найден'); return; }
+            if (!teacher.accepting_students) {
+                alert('Этот репетитор временно не принимает новых учеников. Выберите другого.');
+                return;
+            }
+            const modal = document.getElementById('bookingModal');
+            if (!modal) return;
+            document.getElementById('bookingTeacherName').innerText = `Запись на урок к ${teacher.name}`;
+            document.getElementById('selectedTeacherId').value = teacherId;
+            document.getElementById('bookingSubject').value = teacher.subjects.split(',')[0];
+            document.getElementById('bookingDate').value = '';
+            document.getElementById('bookingTime').value = '';
+            document.getElementById('bookingNotes').value = '';
+            modal.style.display = 'flex';
+        };
+
+        function closeBookingModal() {
+            const modal = document.getElementById('bookingModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function initBookingForm() {
+            const form = document.getElementById('bookingForm');
+            if (!form) return;
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (!currentUser) {
+                    alert('Необходимо войти в систему');
+                    redirectToLogin();
+                    return;
+                }
+                const teacherId = parseInt(document.getElementById('selectedTeacherId').value);
+                const teacher = tutors.find(t => t.id === teacherId);
+                if (!teacher || !teacher.accepting_students) {
+                    alert('Запись невозможна: репетитор не принимает учеников.');
+                    closeBookingModal();
+                    return;
+                }
+                const date = document.getElementById('bookingDate').value;
+                const time = document.getElementById('bookingTime').value;
+                if (!date || !time) {
+                    alert('Выберите дату и время урока');
+                    return;
+                }
+                const subject = document.getElementById('bookingSubject').value;
+                const notes = document.getElementById('bookingNotes').value;
+                alert(`✅ Урок забронирован!\nРепетитор: ${teacher.name}\nПредмет: ${subject}\nДата: ${date}\nВремя: ${time}\nПожелания: ${notes || 'нет'}`);
+                closeBookingModal();
+                form.reset();
+            });
+        }
+
+        function initModalCloseHandlers() {
+            const closeBtn = document.getElementById('closeModalBtn');
+            const cancelBtn = document.getElementById('cancelModalBtn');
+            if (closeBtn) closeBtn.onclick = closeBookingModal;
+            if (cancelBtn) cancelBtn.onclick = closeBookingModal;
+            window.onclick = function(event) {
+                if (event.target.classList && event.target.classList.contains('modal')) {
+                    event.target.style.display = 'none';
+                }
             };
-            
-            document.getElementById('balanceUserName').textContent = userNames[userId] || 'Пользователь';
-            document.getElementById('balanceUserId').value = userId;
-            document.getElementById('balanceUserType').value = userType;
-            
-            // Демо-балансы
-            const demoBalances = {
-                1: 45000,
-                2: 38500,
-                3: 52300,
-                4: 41200
-            };
-            
-            document.getElementById('currentUserBalance').textContent = 
-                (demoBalances[userId] || 0).toLocaleString('ru-RU') + ' ₽';
-            
-            document.getElementById('balanceModal').style.display = 'block';
         }
-        
-        function showUserOperations(userId, userType) {
-            document.getElementById('operationsModal').style.display = 'block';
+
+        function init() {
+            initDemoTutors();
+            loadCurrentUser();
+            renderTeachers();
+            initBookingForm();
+            initModalCloseHandlers();
         }
-        
-        function processBalanceOperation() {
-            const userId = document.getElementById('balanceUserId').value;
-            const userType = document.getElementById('balanceUserType').value;
-            const operationType = document.getElementById('operationType').value;
-            const amount = document.getElementById('amount').value;
-            const comment = document.getElementById('comment').value;
-            
-            alert(`Операция выполнена!\nТип: ${operationType}\nСумма: ${amount} ₽\nКомментарий: ${comment}`);
-            closeModal('balanceModal');
-        }
-        
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-        
-        function exportBalanceReport(type) {
-            alert(`Отчет по ${type} будет экспортирован`);
-        }
-        
-        function showBalanceStats() {
-            alert('Статистика балансов будет показана');
-        }
+
+        init();
     </script>
 </body>
 </html>
